@@ -108,6 +108,9 @@ app komen). Beide nog voorlopig.
   - het meetrapport wordt opgebouwd.
 - Laptop (headless, GPU via SwiftShader/ANGLE): lite en full ~13 ms rekentijd, beperkt door de
   nep-camera.
+- Gepubliceerd: versie `0.1.0-6632e3a` staat live op https://kristofpeeters81-lgtm.github.io/IdolAcademy/.
+  Alle CI-controles zijn groen, de CSP staat in de live pagina, en de modellen, WASM en licentie
+  geven allemaal HTTP 200 met de juiste grootte.
 - **Nog te doen door Kristof:** recente Android-gsm, oude Android-tablet, laptop met echte
   webcam. Per toestel het meetrapport kopiëren en doorsturen.
 
