@@ -63,7 +63,8 @@ export class PoseTracker {
     const landmarks: Landmark[] | null = first
       ? first.map((p) => ({ x: p.x, y: p.y, z: p.z, visibility: p.visibility ?? 0 }))
       : null;
-    return { landmarks, timestamp, inferenceMs };
+    const aspect = video.videoHeight > 0 ? video.videoWidth / video.videoHeight : 4 / 3;
+    return { landmarks, timestamp, inferenceMs, aspect };
   }
 
   close(): void {

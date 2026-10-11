@@ -25,4 +25,6 @@ export interface PoseFrame {
   timestamp: number;
   /** Hoe lang het model over dit beeld deed (ms). */
   inferenceMs: number;
+  /** Breedte / hoogte van het camerabeeld (nodig om x en y in dezelfde eenheid te zetten). */
+  aspect: number;
 }
