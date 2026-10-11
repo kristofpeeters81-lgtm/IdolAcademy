@@ -23,3 +23,29 @@ export function saveAge(age: Age): void {
     // Niet erg: volgende keer opnieuw kiezen.
   }
 }
+
+const SOUND_KEY = 'idolAcademy.sound';
+const VOICE_KEY = 'idolAcademy.voice';
+
+export interface SoundPrefs {
+  sound: boolean;
+  voice: boolean;
+}
+
+/** Geluid en stem staan standaard aan. */
+export function loadSoundPrefs(): SoundPrefs {
+  try {
+    return { sound: localStorage.getItem(SOUND_KEY) !== 'uit', voice: localStorage.getItem(VOICE_KEY) !== 'uit' };
+  } catch {
+    return { sound: true, voice: true };
+  }
+}
+
+export function saveSoundPrefs(p: SoundPrefs): void {
+  try {
+    localStorage.setItem(SOUND_KEY, p.sound ? 'aan' : 'uit');
+    localStorage.setItem(VOICE_KEY, p.voice ? 'aan' : 'uit');
+  } catch {
+    // Niet erg.
+  }
+}

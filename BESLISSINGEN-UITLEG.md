@@ -650,3 +650,64 @@ een stap vóór of na een game bij.
 leeftijd gekozen is. De keuze wordt in de browser onthouden (`localStorage`). Lukt dat niet
 (privévenster), dan kies je ze gewoon opnieuw. In de estafette (blok 8) krijgt elke speler zijn
 eigen leeftijd (#10).
+
+## 47. De beat
+
+**Voorstel:** een eigen K-pop/dance-loop, volledig gesynthetiseerd met Web Audio (#14: geen
+liedjes of geluidsbestanden).
+- **Akkoorden** Am–F–C–G (de bekende "pop-progressie"). Kick op elke tel, een gesyncopeerde bas.
+- **Lagen per Power-zone** (#26): rustig = kick + bas; matig = + clap en hihat; intens =
+  + akkoordstoten; explosief = + snelle hihats en arpeggio.
+- **Tempo** 108 → 116 → 124 → 132 bpm volgens de zone. Per maat verandert het tempo maximaal
+  4 bpm, zodat de muziek vloeiend versnelt.
+- Een **planner** zet telkens ~120 ms vooruit noten klaar ("lookahead"). Zo blijft het ritme
+  strak, ook als de hoofdthread even bezig is met de detectie.
+
+**Gecontroleerd:**
+- `scripts/render-beat.mjs` rendert de beat buiten de app naar `e2e-output/beat.wav` (2 maten
+  per zone): piek ±0,7 (geen oversturing), gemiddeld volume stijgt per zone.
+- Een spectrogram toont de lagen die erbij komen.
+- Het volume is daarna opgetrokken (0,55 → 0,7) voor kleine gsm-speakers.
+
+## 48. Lumi's stem: enkel lokaal
+
+**Voorstel:** Lumi gebruikt de spraaksynthese van het toestel, maar **enkel stemmen met
+`localService`**. Volgorde: nl-BE, nl-NL, dan een andere "nl".
+
+**Waarom:** sommige browsers bieden online stemmen aan (bv. "Google Nederlands" in Chrome op de
+pc). Dan gaat de tekst naar een server, en dat tegenhouden kan onze CSP niet (#4). Vandaag zegt
+Lumi enkel algemene zinnen, maar in de estafette komen er namen bij ("Klaar, Mila?"). Die mogen
+het toestel niet verlaten.
+
+**Gevolgen:**
+- Is er geen lokale Nederlandse stem, dan zwijgt Lumi. Alles staat ook op het scherm, en het
+  startscherm meldt het.
+- **Het soort stem hangt van het toestel af.** Op de test-pc is de enige lokale stem "Microsoft
+  Frank" (een mannenstem). Op Android is het meestal de Google-spraakengine van het toestel zelf.
+  De stem wordt iets hoger gezet (pitch 1,25), maar een "meisjesstem" voor Lumi is niet te
+  garanderen. Vooraf opgenomen zinnen zouden dat wel kunnen, en dat is te bekijken na de test.
+
+## 49. Wat Lumi wanneer zegt, en de effecten
+
+**Voorstel:**
+- **Lumi zegt:**
+  - bij de uitleg: de naam van de game + de uitleg;
+  - tijdens de ruimte-check: de tips;
+  - bij het aftellen: "Daar gaan we!";
+  - tijdens het spelen: haar aanmoedigingen + de mijlpalen;
+  - bij het doel: "Spotlight aan! Super gedaan!";
+  - bij uit beeld: "Pauze. Kom terug in beeld." en daarna "Daar ben je weer!";
+  - bij het resultaat: een reactie volgens de sterren.
+- **Dosering** (`SpeechGate`): normale zinnen minstens 2,5 s uit elkaar, nooit twee keer dezelfde
+  na elkaar, en ze worden overgeslagen als Lumi nog praat. Belangrijke zinnen onderbreken.
+- **Effecten:**
+  - klik, en een zachte tik per stap;
+  - piep bij 3-2-1 en een akkoord bij GO;
+  - "mijlpaal"-arpeggio, een fanfare bij het doel, en een "perfect"-pling;
+  - waarschuwing bij de laatste 5 s, een pauze-toon, en een "ding" per ster.
+- **Muziek zachter** zolang Lumi spreekt of het spel gepauzeerd is (twee aparte redenen, zodat
+  het einde van een zin de pauze niet opheft).
+- **Instellingen:** "Muziek & geluid" en "Stem van Lumi" aan/uit op het startscherm, onthouden
+  per toestel. Standaard staat alles aan.
+- **Browserregel:** geluid start pas na een tik. De tik op een gamekaart en op "Ik ben klaar!"
+  ontgrendelen het geluid.

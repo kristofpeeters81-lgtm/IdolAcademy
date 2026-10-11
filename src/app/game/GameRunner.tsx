@@ -8,6 +8,8 @@ import type { StageContext } from '../Stage';
 import { Coach, Popups, PowerMeter, TimerRing } from './Hud';
 import { ResultScreen } from './ResultScreen';
 import { SpotlightBeam } from './SpotlightBeam';
+import { useGameAudio, type GamePhase } from './useGameAudio';
+import { audio } from '../../audio/director';
 
 /**
  * Het vaste verloop van elke game (#44):
@@ -15,7 +17,7 @@ import { SpotlightBeam } from './SpotlightBeam';
  * Tijdens het spelen pauzeert alles als de speler uit beeld gaat (#18), en mag het model niet
  * wisselen (#39).
  */
-type Phase = 'uitleg' | 'plaats' | 'aftellen' | 'spelen' | 'resultaat';
+type Phase = GamePhase;
 
 const UI_INTERVAL_MS = 100;
 const POPUP_MS = 1300;
@@ -107,6 +109,9 @@ export function GameRunner({ engine, game, age, onExit }: StageContext & { game:
     return () => window.clearInterval(timer);
   }, [phase, countdownEnd]);
 
+  const countdown = Math.ceil((countdownEnd - now) / 1000);
+  useGameAudio({ game, phase, view, advice, presence, countdown, popups, result });
+
   if (!game.create) return null;
 
   if (phase === 'uitleg') {
@@ -133,7 +138,15 @@ export function GameRunner({ engine, game, age, onExit }: StageContext & { game:
               <button type="button" className="secondary" onClick={onExit}>
                 Terug
               </button>
-              <button type="button" className="big" onClick={() => setPhase('plaats')}>
+              <button
+                type="button"
+                className="big"
+                onClick={() => {
+                  audio.unlock();
+                  audio.sfx('klik');
+                  setPhase('plaats');
+                }}
+              >
                 Ik ben klaar!
               </button>
             </div>
@@ -156,8 +169,6 @@ export function GameRunner({ engine, game, age, onExit }: StageContext & { game:
       />
     );
   }
-
-  const countdown = Math.ceil((countdownEnd - now) / 1000);
 
   return (
     <>

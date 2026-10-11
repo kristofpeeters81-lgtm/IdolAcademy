@@ -4,6 +4,7 @@ import { AGES, ageLabel, type Age } from '../games/scoring';
 import type { GameId } from '../games/types';
 import { CoachLumi } from './CoachLumi';
 import { GameIcon } from './GameIcon';
+import { SoundSettings } from './SoundSettings';
 
 const CATEGORY_LABEL = { cardio: 'Cardio', kracht: 'Kracht', test: 'Test' } as const;
 
@@ -68,6 +69,13 @@ export function Home(p: { age: Age | null; onAge: (a: Age) => void; onPlay: (id:
           })}
         </div>
         {!p.age && <p className="hint-text">Kies eerst je leeftijd.</p>}
+      </section>
+
+      <section aria-labelledby="sound-title">
+        <h2 id="sound-title" className="section-title">
+          Geluid
+        </h2>
+        <SoundSettings />
       </section>
 
       <footer className="home-foot">

@@ -1039,3 +1039,24 @@ button.icon {
 .result-card .row {
   justify-content: center;
 }
+
+/* Geluidsinstellingen */
+.sound-settings {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+.sound-settings .toggle {
+  font-family: var(--font-body);
+  font-weight: 600;
+  background: var(--panel);
+  border: 2px solid var(--line);
+}
+.sound-settings .toggle.on {
+  border-color: var(--accent-2);
+  box-shadow: 0 0 12px rgba(34, 230, 255, 0.35);
+}
+.sound-settings .hint-text {
+  flex-basis: 100%;
+}

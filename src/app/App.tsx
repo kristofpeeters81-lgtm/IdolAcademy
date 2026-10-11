@@ -6,7 +6,13 @@ import { GameRunner } from './game/GameRunner';
 import { Home } from './Home';
 import { Lab } from './lab/Lab';
 import { Stage } from './Stage';
-import { loadAge, saveAge } from './storage';
+import { audio } from '../audio/director';
+import { loadAge, loadSoundPrefs, saveAge } from './storage';
+
+// Geluidsvoorkeuren van dit toestel toepassen bij het opstarten.
+const prefs = loadSoundPrefs();
+audio.setSound(prefs.sound);
+audio.setVoice(prefs.voice);
 
 type Screen = { name: 'home' } | { name: 'lab' } | { name: 'game'; id: GameId };
 
@@ -34,7 +40,11 @@ export function App() {
         setAge(a);
         saveAge(a);
       }}
-      onPlay={(id) => setScreen({ name: 'game', id })}
+      onPlay={(id) => {
+        // De tik op de kaart "ontgrendelt" geluid en stem (browserregel), zodat Lumi meteen kan praten.
+        audio.unlock();
+        setScreen({ name: 'game', id });
+      }}
       onLab={() => setScreen({ name: 'lab' })}
     />
   );

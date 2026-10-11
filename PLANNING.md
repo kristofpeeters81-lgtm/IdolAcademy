@@ -22,6 +22,9 @@ testen, en pas na Kristofs akkoord begint het volgende blok. Een blok is pas af 
 - ✅ **Blok 3 (Stijlvoorbeeld)**: stijl A "Neon Stage" gekozen (#43)
 - 🧪 **Blok 4 (Spotlight Sprint)** gebouwd in stijl A: wacht op test door Kristof (echte knieheffingen, doelen per leeftijd)
 - Voorlopige beslissingen te bevestigen: #44–#46
+- 🧪 **Blok 5 (Geluid)**: beat, effecten en Lumi's stem: wacht op beluisteren op het toestel
+- Voorlopige beslissingen te bevestigen: #47–#49
+- Toesteltest: Jump Squads (squat-detector) "leken ok" (Kristof)
 
 ## Bouwblokken
 
@@ -31,7 +34,7 @@ testen, en pas na Kristofs akkoord begint het volgende blok. Een blok is pas af 
 | 2 | **Bewegingsmotor**: normalisatie, detectoren (reps, houding, raken, ontwijken, uit beeld), ruimte-check, opname-knop (#31) + unit tests | Squats en knieheffen doen, kloppen de tellers? Enkele opnames maken | 🧪 |
 | 3 | **Stijlvoorbeeld**: kleuren, idol-coach (SVG), HUD, Power-meter, als voorbeeldblad | Stijl goedkeuren of bijsturen (**geen code vóór "ja"**) | ✅ |
 | 4 | **Eerste game end-to-end**: Spotlight Sprint met HUD, Power-score (#26) en scorescherm | Volledige game spelen | 🧪 |
-| 5 | **Audio**: tempo-reactieve beat, geluidseffecten, NL-spraakcoach | Beluisteren op toestel en bij casten | ⏳ |
+| 5 | **Audio**: tempo-reactieve beat, geluidseffecten, NL-spraakcoach | Beluisteren op toestel en bij casten | 🧪 |
 | 6 | **Games A**: Lightstick Catch, Beat Punch, Laser Stage | Elke game spelen | ⏳ |
 | 7 | **Games B**: Jump Squad, Freeze Pose, Sky Climb, Floor Crawl 🧪 | Elke game spelen | ⏳ |
 | 8 | **Spelverloop**: opwarming, rustpauzes, carrousel, estafette met leeftijdsschaling, scorebord | Estafette met 2+ kinderen | ⏳ |

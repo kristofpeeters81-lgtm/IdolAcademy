@@ -1,15 +1,9 @@
 import { ageLabel } from '../../games/scoring';
 import type { GameInfo, GameResult } from '../../games/types';
 import { CoachLumi } from '../CoachLumi';
+import { praise } from './useGameAudio';
 
 const ZONES = ['rustig', 'matig', 'intens', 'explosief'];
-
-function praise(stars: number): string {
-  if (stars === 3) return 'Superster! Je haalde je doel!';
-  if (stars === 2) return 'Bijna! Nog een beetje sneller en je hebt drie sterren.';
-  if (stars === 1) return 'Goed begin! Probeer nog eens?';
-  return 'Kom op, trainee: nog een keer!';
-}
 
 /** Resultaat na een game: sterren, % van het leeftijdsdoel (#30), Power-zones (#26). */
 export function ResultScreen({ game, result, onAgain, onExit }: { game: GameInfo; result: GameResult; onAgain: () => void; onExit: () => void }) {

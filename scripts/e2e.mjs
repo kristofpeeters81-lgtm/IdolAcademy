@@ -61,6 +61,20 @@ try {
   page.on('console', (m) => m.type() === 'error' && consoleErrors.push(m.text()));
   page.on('pageerror', (e) => consoleErrors.push(String(e)));
   await page.evaluateOnNewDocument(() => {
+    // Geluid meten (horen kan niet headless): AudioContexts en aangemaakte klanken tellen.
+    window.__audio = { ctxs: [], osc: 0 };
+    const origOsc = BaseAudioContext.prototype.createOscillator;
+    BaseAudioContext.prototype.createOscillator = function () {
+      window.__audio.osc++;
+      return origOsc.call(this);
+    };
+    const Orig = window.AudioContext;
+    window.AudioContext = class extends Orig {
+      constructor(...a) {
+        super(...a);
+        window.__audio.ctxs.push(this);
+      }
+    };
     window.__csp = [];
     document.addEventListener('securitypolicyviolation', (e) => window.__csp.push(`${e.violatedDirective} ${e.blockedURI}`));
   });
@@ -183,6 +197,13 @@ try {
   await page.screenshot({ path: path.join(OUT, '8-game-spelen.png') });
   const hud = await page.$('.hud-count').then((h) => h !== null);
   check(hud, 'game: HUD tijdens het spelen');
+  // De muziek loopt als er tijdens het spelen klanken bij blijven komen.
+  const osc1 = await page.evaluate(() => window.__audio.osc);
+  await new Promise((r) => setTimeout(r, 2000));
+  const sound = await page.evaluate(() => ({ state: window.__audio.ctxs[0]?.state ?? 'geen', osc: window.__audio.osc }));
+  check(sound.state === 'running' && sound.osc - osc1 >= 8, `geluid: AudioContext ${sound.state}, +${sound.osc - osc1} klanken in 2 s`);
+  const voices = await page.evaluate(() => speechSynthesis.getVoices().filter((v) => v.lang.toLowerCase().startsWith('nl')).map((v) => `${v.name}${v.localService ? '' : ' (online)'}`));
+  console.log(`  Nederlandse stemmen in deze browser: ${voices.join(', ') || 'geen'}`);
   const done = await page.waitForSelector('.result', { timeout: 60000 }).then(() => true).catch(() => false);
   const summary = done ? await page.$eval('.result-main', (r) => r.textContent.replace(/\s+/g, ' ').trim()) : '';
   check(done, `game: resultaatscherm na 20 s (${summary})`);

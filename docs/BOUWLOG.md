@@ -274,8 +274,10 @@ bij uit beeld, en dat meetbaar maken met opnames van echte bewegingen (#21, #31)
     headless);
   - geen CSP-schendingen, geen externe verzoeken, geen consolefouten;
   - opmaak gecontroleerd op laptop en op gsm-formaat (staand).
-- **Nog te doen door Kristof:** elke beweging testen en per beweging minstens één opname met het
-  echte aantal (zie `test-fixtures/README.md`).
+- **Toesteltest Kristof (2026-10-11):** "de jump squads leken alvast ok" (squat-detector in het
+  testlab). De andere bewegingen zijn nog niet getest, en er zijn nog geen opnames.
+- **Nog te doen door Kristof:** de andere bewegingen testen en per beweging minstens één opname
+  met het echte aantal maken (zie `test-fixtures/README.md`).
 
 **Problemen en oplossingen:**
 1. *Ontwerp:* de 2D-kniehoek bleek van voren onbruikbaar, dus gekozen voor dijbeen-verkorting
@@ -417,3 +419,46 @@ zeven.
 **Les voor B-world:** neem `src/games/` over (spelregels, scores, sessie-interface). De React-schil
 (`src/app/game/`) toont hoe je het verloop opbouwt, maar de visuals worden in B-world opnieuw
 gemaakt.
+
+---
+
+## Blok 5 — Geluid: beat, effecten en Lumi's stem  (2026-10-11 → wacht op test door Kristof)
+
+**Doel:** de games laten klinken als een dansgame, met een coach die je hoort van op 2–3 m (#17).
+
+**Gebouwd (`src/audio/`, zonder React):**
+- `music.ts` (puur): akkoorden, ritmepatronen per laag, tempo per zone (#47).
+- `synth.ts`: instrumenten (kick, clap, hihat, bas, supersaw-akkoord, pluck) en 10
+  geluidseffecten, alles met oscillatoren en ruis.
+- `speech.ts` (puur): stemkeuze enkel lokaal (#48), `SpeechGate` (dosering), uitspreekbare tekst.
+- `director.ts`: één `audio`-object met `unlock`, `sfx`, `startMusic`/`stopMusic`, `setLevel`,
+  `setPaused`, `say`, en `setSound`/`setVoice`. Een planner met 120 ms vooruitkijken, een
+  begrenzer op de uitgang, en ducking.
+
+**In de app:**
+- `src/app/game/useGameAudio.ts` koppelt het spelverloop aan geluid en stem (#49). Het luistert
+  enkel naar wat de game al toont (fase, teller, zone, popups, aanwezigheid), dus de spellogica
+  weet niets van geluid.
+- `SoundSettings.tsx`: knoppen "Muziek & geluid" en "Stem van Lumi" op het startscherm,
+  onthouden per toestel, met een melding als er geen lokale stem is.
+
+**Getest:**
+- **99 unit tests** (+10): lagen per zone, four-on-the-floor, akkoordvolgorde, geleidelijk tempo,
+  noot/tijd-omrekening, stemkeuze (lokaal voor online, nl-BE voor nl-NL, `nl_BE`), dosering en
+  uitspraak.
+- **E2E:** tijdens het spelen draait de AudioContext (*running*) en komen er +33 klanken bij in
+  2 s, dus de muziek loopt. De headless browser vond lokaal "Microsoft Frank - Dutch".
+- **Beat gerenderd** (`scripts/render-beat.mjs` → `e2e-output/beat.wav`): geen oversturing,
+  lagen zichtbaar in het spectrogram. Het muziekvolume is daarna verhoogd.
+- **Nog niet beluisterd door een mens**, en de stem is niet op Android getest.
+
+**Problemen en oplossingen (tijdens het bouwen):**
+1. Een normale zin werd als "gezegd" geregistreerd, ook als hij werd overgeslagen omdat Lumi nog
+   praatte. De volgorde van de controles is omgedraaid.
+2. Het einde van een zin zette de muziek terug luid, ook tijdens een pauze. Er zijn nu aparte
+   redenen voor "zacht".
+3. De e2e-drempel "> 50 klanken" was te hoog voor de rustigste zone. Nu wordt gemeten of er
+   klanken *bij komen*.
+
+**Les voor B-world:** `src/audio/music.ts` en `speech.ts` zijn puur en direct herbruikbaar. Hou de
+regel "enkel lokale stemmen" aan, zeker zodra er namen uitgesproken worden.

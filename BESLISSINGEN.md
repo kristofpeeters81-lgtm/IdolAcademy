@@ -57,3 +57,6 @@ nieuw nummer; de oude krijgt status `vervangen door #x` en blijft staan.
 | 44 | 2026-10-11 | Vast verloop per game: uitleg → ruimte-check → 3-2-1-GO → spelen (pauze bij uit beeld) → resultaat | voorlopig |
 | 45 | 2026-10-11 | Spotlight Sprint: 20 s knieën hoog, leeftijdsdoelen 35–55 stappen, sterren bij 50/80/100% | voorlopig |
 | 46 | 2026-10-11 | Leeftijd wordt op het startscherm gekozen en per toestel onthouden (lokaal) | voorlopig |
+| 47 | 2026-10-11 | Beat: zelf gesynthetiseerd (Am–F–C–G), lagen en tempo (108→132 bpm) groeien mee met de Power-zone | voorlopig |
+| 48 | 2026-10-11 | Lumi spreekt enkel met een lokale Nederlandse stem van het toestel; anders zwijgt ze (privacy) | voorlopig |
+| 49 | 2026-10-11 | Wat Lumi wanneer zegt (gedoseerd), effecten per gebeurtenis, muziek zachter bij spraak/pauze; geluid en stem aan/uit per toestel | voorlopig |

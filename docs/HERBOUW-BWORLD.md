@@ -121,9 +121,24 @@ doel, en sterren bij 50/80/100% (`scoring.ts`).
 *(Blok 8)* De opwarming, de rustpauzeregel, de ruimte-check, uit beeld, en de estafette met
 leeftijdsschaling.
 
-## 6. Audio
-*(Blok 5)* De opbouw van de beat-synthese, de geluidseffecten en de spraakcoach, met de
-valkuilen per toestel.
+## 6. Audio *(blok 5, ingevuld)*
+
+- **Over te nemen:** `src/audio/` (puur TS + Web Audio, zonder React). `audio.unlock()` moet in
+  een tik-handler gebeuren (browserregel).
+- **Muziek:** `music.ts` beschrijft de noten. `director.ts` plant ze in met 120 ms lookahead
+  (`setInterval` 25 ms). Lagen en tempo volgen de Power-zone (#47). Wil B-world een eigen
+  sfeer, pas dan enkel `PROGRESSION`/`stepEvents` en de klanken in `synth.ts` aan.
+- **Stem:** enkel `localService`-stemmen (#48). Geen stem = stil, met alles ook op het scherm.
+  Het soort stem verschilt per toestel.
+- **Koppeling:** `useGameAudio.ts` luistert naar fase, teller, zone, popups en aanwezigheid.
+  Dat is een patroon om na te bouwen: het spel kent geen geluid.
+- **Valkuilen:**
+  - zonder tik geen geluid;
+  - normale zinnen niet laten opstapelen (`SpeechGate`);
+  - ducking met aparte redenen (spraak/pauze);
+  - een begrenzer op de master om oversturing te vermijden.
+- **Controleren zonder te luisteren:** `scripts/render-beat.mjs` (WAV + piek/rms per zone) en het
+  tellen van aangemaakte oscillatoren in de e2e.
 
 ## 7. Koppeling met B-world-data
 *(Blok 10)* Advies: een gespeelde game als event in B-world's append-only `events`-tabel
