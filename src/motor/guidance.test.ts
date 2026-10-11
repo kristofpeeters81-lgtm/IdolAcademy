@@ -35,6 +35,11 @@ describe('judgeSpace', () => {
     expect(judgeSpace(close, 'upper').ok).toBe(true);
   });
 
+  it('voor bovenlichaam-games is de gewone afstand (hele lichaam in beeld) ook goed', () => {
+    expect(judgeSpace(bodyOf({ torso: 0.2 }), 'upper').ok).toBe(true);
+    expect(judgeSpace(bodyOf({ torso: 0.15 }), 'upper').ok).toBe(true);
+  });
+
   it('meldt dat er niemand in beeld is', () => {
     const tracker = new BodyTracker();
     const empty = tracker.update({ landmarks: null, timestamp: 0, inferenceMs: 0, aspect: 4 / 3 });

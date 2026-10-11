@@ -14,6 +14,7 @@ interface Props {
   onMode: (m: ModelMode) => void;
   onSkeleton: (on: boolean) => void;
   onExit: () => void;
+  initiallyOpen?: boolean;
 }
 
 /** Kleur van een fps-waarde: groen = vlot speelbaar, oranje = net, rood = te traag. */
@@ -25,7 +26,7 @@ function fpsClass(fps: number): string {
 
 /** Debugpaneel (#16, #21): alle meetwaarden zichtbaar + knoppen om te vergelijken. */
 export function DebugPanel(p: Props) {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(p.initiallyOpen ?? true);
   const [report, setReport] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const s = p.stats;

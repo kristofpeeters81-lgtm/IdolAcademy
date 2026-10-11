@@ -213,6 +213,33 @@ describe('EnergyMeter', () => {
   });
 });
 
+describe('EnergyMeter — eerlijk bij elke beeldsnelheid', () => {
+  /** Stilstaan met realistisch trillen van de punten (±0,4% van de beeldhoogte). */
+  function jitterFrames(fps: number, seed = 1): PoseFrame[] {
+    let x = seed;
+    const rnd = () => ((x = (x * 16807) % 2147483647) / 2147483647 - 0.5) * 2;
+    return synthSequence(4, () => ({}), fps).map((f) => ({
+      ...f,
+      landmarks: f.landmarks!.map((p) => ({ ...p, x: p.x + rnd() * 0.004, y: p.y + rnd() * 0.004 })),
+    }));
+  }
+
+  it('trillen bij stilstaan geeft "rustig", ook op 60 fps', () => {
+    for (const fps of [15, 30, 60]) {
+      const e = run(new EnergyMeter(), jitterFrames(fps)).energy;
+      expect(e, `${fps} fps`).toBeLessThan(0.6);
+    }
+  });
+
+  it('dezelfde beweging geeft ongeveer dezelfde energie op 15 en 60 fps', () => {
+    const move = (t: number): SynthParams => ({ squat: wave(t, 1) * 0.6, leftArm: 20 + 120 * wave(t, 0.8) });
+    const at = (fps: number) => run(new EnergyMeter(), synthSequence(4, move, fps)).energy;
+    const slow = at(15);
+    const fast = at(60);
+    expect(Math.abs(slow - fast) / fast).toBeLessThan(0.25);
+  });
+});
+
 describe('detectorregister', () => {
   it('maakt van elke detector een werkend exemplaar', () => {
     const frames = afterStanding(1, () => ({}));

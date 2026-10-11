@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { CameraError, startCamera, stopCamera, type CameraInfo, type Facing, type Resolution } from '../motor/camera';
 import { PoseEngine, type EngineStats, type ModelMode } from '../motor/poseEngine';
 import { DebugPanel } from './DebugPanel';
@@ -7,8 +7,16 @@ import { CAMERA_ERROR_TEXT } from './messages';
 
 type Status = 'camera' | 'model' | 'ready' | 'error';
 
-/** Camerabeeld + skelet + debugpaneel. Hier komen later de minigames bovenop. */
-export function Stage({ onExit }: { onExit: () => void }) {
+/** Wat een scherm bovenop het camerabeeld (testlab, later de games) van de Stage krijgt. */
+export interface StageContext {
+  engine: PoseEngine;
+  camera: CameraInfo;
+  /** Wordt het beeld gespiegeld getoond (frontcamera)? Nodig om "links op het scherm" te bepalen. */
+  mirrored: boolean;
+}
+
+/** Camerabeeld + skelet + meetpaneel; `children` komt erbovenop zodra alles klaar is. */
+export function Stage({ onExit, children }: { onExit: () => void; children?: (ctx: StageContext) => ReactNode }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<PoseEngine | null>(null);
@@ -133,9 +141,7 @@ export function Stage({ onExit }: { onExit: () => void }) {
         </div>
       )}
 
-      {status === 'ready' && stats && stats.visibleBodyPoints < 9 && (
-        <div className="hint">Ga zo staan dat je helemaal in beeld bent ({stats.visibleBodyPoints}/9)</div>
-      )}
+      {status === 'ready' && camera && engineRef.current && children?.({ engine: engineRef.current, camera, mirrored: facing === 'user' })}
 
       {stats && (
         <DebugPanel
@@ -149,6 +155,7 @@ export function Stage({ onExit }: { onExit: () => void }) {
           onMode={changeMode}
           onSkeleton={setShowSkeleton}
           onExit={onExit}
+          initiallyOpen={false}
         />
       )}
     </div>

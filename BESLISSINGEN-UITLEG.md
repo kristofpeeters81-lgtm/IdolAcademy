@@ -490,3 +490,72 @@ dezelfde grep). Zie `docs/HERBOUW-BWORLD.md` §2.
 
 **Waarom de modellen in git:** de URL "latest" kan veranderen. Met een vaste kopie test iedereen
 hetzelfde model, en de build hangt niet af van Google's servers.
+
+## 37. Meten van voren: dijbeen-verkorting en romplengtes
+
+**Probleem:** De camera kijkt recht van voren. Bij een squat of een knieheffing beweegt de knie
+vooral naar de camera toe, dus in de diepte. Een kniehoek (heup–knie–enkel) gemeten op het platte
+beeld blijft dan bijna 180° en is onbruikbaar. De z-waarde van MediaPipe is te ruw om op te
+steunen.
+
+**Beslissing:** Detectoren meten wat van voren wél zichtbaar is:
+- **Squatdiepte** = hoe "kort" het dijbeen in beeld wordt t.o.v. rechtop staan:
+  `1 − (knie.y − heup.y) / rechtop`. Dat geeft 0 rechtop en ~0,75 bij een volle squat.
+- **Knieheffing** = hetzelfde per been, maar t.o.v. de eigen heup. Daardoor telt meespringen
+  niet mee.
+- Alle afstanden en drempels staan in **romplengtes** (schouders ↔ heupen). Zo maken de afstand
+  tot de camera en de lengte van het kind niet uit.
+- "Rechtop" is het maximum van de laatste 10 s, zodat het zich aanpast als het kind verschuift.
+- De romplengte zelf is het 80e percentiel van de laatste ~3 s. Bij voorover buigen lijkt de
+  romp korter, en dat mag de schaal niet verstoren.
+
+**Alternatieven:** een 2D-kniehoek (onbruikbaar van voren); 3D-"world landmarks" van MediaPipe
+(diepte is een schatting en ruisgevoelig); de camera zijwaarts zetten (onpraktisch en slechter
+voor andere games).
+
+**Te controleren:** de drempels zijn mild gekozen voor kinderen (squat telt vanaf 35% diepte).
+De echte opnames (#40) moeten uitwijzen of dat klopt.
+
+## 38. Hele lichaam of bovenlichaam per detector
+
+**Aanleiding:** Kristofs test: dichter bij het toestel worden minder punten gezien.
+
+**Beslissing:** Elke detector geeft aan wat hij nodig heeft:
+- `full`: hele lichaam, hoofd tot enkels. Dat geldt voor squats, knieën, jumping jacks,
+  houdingen en ontwijken.
+- `upper`: bovenlichaam (hoofd, schouders, ellebogen, polsen, heupen). Dat geldt voor stoten,
+  klimmen en energie.
+
+De ruimte-check en de pauze bij uit beeld gebruiken die lijst. Bij `upper` mag het kind dus
+dichterbij staan (hoofd→heupen 20–60% van de beeldhoogte). De gewone afstand, met het hele
+lichaam in beeld, is óók goed: dichterbij *mag*, maar moet niet. Dat bleek uit de e2e-test.
+
+## 39. Modelwissel enkel tijdens de ruimte-check
+
+**Beslissing:** De automatische lite→full-keuze (#3) mag alleen gebeuren zolang de ruimte-check
+loopt (`engine.setAutoSwitchAllowed`). Een model aanmaken laat de detectie ~0,5–1 s haperen
+(bouwlog blok 1). Tijdens het tellen of spelen zou dat een gemiste herhaling of een oneerlijke
+game opleveren.
+
+## 40. Testlab, opnames en fixture-tests
+
+**Beslissing:**
+- Het testlab is het scherm van blok 2: je kiest een beweging en ziet de teller, de toestand,
+  een grafiek van het meetsignaal met de drempels, en de energie.
+- **● Opnemen:** eerst 5 s aftellen (tijd om op je plek te gaan staan), dan 10/20/30/60 s
+  opnemen. Daarna vraagt de app "hoeveel deed je er echt?" plus een notitie, en downloadt een
+  JSON-bestand naar Downloads. Er zitten enkel lichaamspunten in, nooit beelden (#4). Dat is
+  ~30 KB per seconde, met een maximum van 90 s.
+- Elke opname in `test-fixtures/` wordt bij `npm test` automatisch afgespeeld
+  (`src/motor/fixtures.test.ts`). De marge is ±1, of ±10% bij grotere aantallen; bij houdingen
+  ±1,5 s.
+- **Privacy:** de repo is publiek. Opnames van kinderen gaan er enkel in met toestemming van de
+  ouder. Anders komen ze in `test-fixtures/lokaal/` (staat in `.gitignore`, draait lokaal wel mee).
+
+**Waarom:** zo wordt "telt het juist?" (#21) meetbaar en herhaalbaar, en elke aanpassing aan een
+drempel wordt meteen getoetst aan echte bewegingen van echte kinderen.
+
+## 41. Jumping jacks voor de opwarming
+
+**Beslissing:** Er komt een extra detector voor jumping jacks: openheid = 60% armen + 40% benen.
+Hij staat niet in de lijst van acht games (#12), maar hoort bij de korte opwarming (#18).

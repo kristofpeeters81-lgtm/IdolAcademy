@@ -46,9 +46,50 @@
   naar `globPatterns` + een `runtimeCaching`-regel voor `/mediapipe/`, en verhoog je
   `maximumFileSizeToCacheInBytes` naar ≥ 15 MB.
 
-## 3. Bewegingsmotor
-*(Blok 2)* De publieke API, de detectoren, de normalisatie en de drempelwaarden, en hoe je een
-nieuwe beweging toevoegt.
+## 3. Bewegingsmotor *(blok 2, ingevuld)*
+
+**Gegevensstroom**
+```
+camera → PoseEngine (MediaPipe) → PoseFrame (33 punten, 0..1, + aspect)
+       → BodyTracker → BodyPose (beeldhoogte-eenheden, romplengte als schaal)
+       → PresenceTracker / SpaceCheck / Detector.update(body) → reading()
+```
+
+**Publieke API (wat een game gebruikt)**
+- `new PoseEngine(video, baseUrl)`: `.setMode('auto'|'lite'|'full')`, `.start()`,
+  `.onFrame(cb)`, `.getStats()`, `.setAutoSwitchAllowed(bool)`, `.dispose()`.
+- `new BodyTracker().update(frame)` → `BodyPose`.
+- `DETECTORS` (register): `{ id, label, game, howTo, needs: 'full'|'upper', create() }`.
+- `Detector`: `update(body)`, `reading()` → `{ count, unit, signal, thresholds, state, detail }`,
+  `reset()`.
+  - `DodgeDetector.current()` geeft de zone op dit moment (voor het moment dat een laserwand
+    aankomt).
+  - `EnergyMeter.energy` geeft de huidige energie (Power-score-basis).
+- `new SpaceCheck(needs).update(body)` → `{ status, message, progress }`;
+  `new PresenceTracker(needs).update(body)` → `'in'|'deels'|'weg'`.
+
+**Spelregels voor het gebruik**
+- Roep `detector.update` alleen aan als de ruimte-check klaar is en de speler niet `weg` is
+  (zie `src/app/lab/Lab.tsx`).
+- `engine.setAutoSwitchAllowed(false)` zodra een game start (#39).
+
+**Normalisatie en drempels:** zie #37. Alle drempels staan als constanten bovenaan elk
+detectorbestand.
+
+**Een nieuwe beweging toevoegen**
+1. Maak `src/motor/detectors/<naam>.ts` met een klasse die `Detector` implementeert. Gebruik
+   `RepCounter` voor herhalingen en drempels in romplengtes.
+2. Voeg hem toe aan `DETECTORS` in `detectors/index.ts` met `needs`.
+3. Schrijf tests met `synthSequence`/`wave` uit `testing/synthPose.ts`: een geval dat moet
+   tellen en minstens één valstrik die níet mag tellen.
+4. Neem echte bewegingen op in het testlab en leg ze in `test-fixtures/`.
+
+**Testen**
+- `src/motor/**/*.test.ts` draaien met Vitest, zonder browser of camera.
+- `test-fixtures/*.json`: echte opnames die automatisch afgespeeld worden
+  (`fixtures.test.ts`, marge ±1/±10%). Kopieer ze mee naar B-world.
+- `scripts/e2e.mjs`: headless Chrome met een nep-camera (`.y4m`-filmpje). Dat controleert ook
+  de CSP en dat er geen externe verzoeken gebeuren.
 
 ## 4. Minigames
 *(Blok 4, 6, 7)* Per game: de spelregels, de detector die gebruikt wordt, de timings, de

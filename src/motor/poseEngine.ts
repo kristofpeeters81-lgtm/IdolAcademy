@@ -41,6 +41,7 @@ export type FrameListener = (frame: PoseFrame) => void;
 export class PoseEngine {
   private tracker: PoseTracker | null = null;
   private mode: ModelMode = 'auto';
+  private autoAllowed = true;
   private loading = false;
   private fullRejected = false;
   private modelSince = 0;
@@ -72,6 +73,14 @@ export class PoseEngine {
     if (mode === 'auto') this.fullRejected = false;
     const wanted: ModelVariant = mode === 'auto' ? (this.tracker?.variant ?? 'lite') : mode;
     if (this.tracker?.variant !== wanted) await this.load(wanted);
+  }
+
+  /**
+   * Mag "auto" nu van model wisselen? Een wissel hapert even (model aanmaken), dus enkel tijdens
+   * de ruimte-check/opwarming toelaten, nooit tijdens een game (bouwlog blok 1).
+   */
+  setAutoSwitchAllowed(allowed: boolean): void {
+    this.autoAllowed = allowed;
   }
 
   start(): void {
@@ -134,7 +143,7 @@ export class PoseEngine {
     this.session.push({ t: now, inferenceMs: frame.inferenceMs, visible: this.visibleBodyPoints });
     for (const listener of this.listeners) listener(frame);
 
-    if (this.mode === 'auto' && now - this.lastAutoCheck > 1000) {
+    if (this.mode === 'auto' && this.autoAllowed && now - this.lastAutoCheck > 1000) {
       this.lastAutoCheck = now;
       this.autoCheck(now);
     }

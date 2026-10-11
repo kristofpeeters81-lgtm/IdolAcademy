@@ -4,3 +4,5 @@ dist/
 e2e-output/
 # Wordt bij elke dev/build gekopieerd uit node_modules (scripts/copy-mediapipe.mjs)
 public/mediapipe/wasm/
+# Opnames die niet publiek mogen (bv. kinderen zonder toestemming)
+test-fixtures/lokaal/

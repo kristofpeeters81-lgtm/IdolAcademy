@@ -15,7 +15,9 @@ import { NEEDED_POINTS } from './presence';
  */
 export const SPACE = {
   full: { minHeight: 0.45, maxHeight: 0.85 },
-  upper: { minHeight: 0.3, maxHeight: 0.6 },
+  // Bovenlichaam (hoofd→heupen) ≈ 45% van de lichaamslengte: 0,2 hier ≈ 0,45 bij 'full'. Zo is de
+  // gewone afstand (hele lichaam in beeld) óók goed; dichterbij mag, maar moet niet.
+  upper: { minHeight: 0.2, maxHeight: 0.6 },
   margin: 0.04,
   maxOffCenter: 0.22,
   holdMs: 1500,

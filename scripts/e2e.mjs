@@ -71,6 +71,9 @@ try {
   await page.screenshot({ path: path.join(OUT, '1-start.png') });
 
   await page.click('button.big');
+  // Meetpaneel staat standaard ingeklapt (vanaf blok 2): openklikken.
+  await page.waitForSelector('.debug-toggle', { timeout: 60000 });
+  await page.click('.debug-toggle');
   // Wachten tot het model geladen is en er een lichaam gevonden wordt.
   const t0 = Date.now();
   const found = await page
@@ -108,6 +111,62 @@ try {
     .then(() => true)
     .catch(() => false);
   check(lite, 'terug naar lite-model');
+
+  // --- Testlab (blok 2) ---
+  const spaceOk = await page
+    .waitForFunction(() => !document.querySelector('.space-banner'), { timeout: 30000 })
+    .then(() => true)
+    .catch(() => false);
+  const banner = await page.$eval('.space-banner p', (p) => p.textContent).catch(() => null);
+  check(spaceOk, `ruimte-check wordt klaar${banner ? ' (laatste tip: ' + banner + ')' : ''}`);
+  await page.select('.lab-head select', 'jumpingjack');
+  await new Promise((r) => setTimeout(r, 9000));
+  const jj = await page.$eval('.lab-count .num', (n) => Number(n.textContent));
+  console.log(`  jumping jacks geteld in ~9 s testfilmpje: ${jj}`);
+  check(jj > 0, 'testlab telt jumping jacks');
+  await page.screenshot({ path: path.join(OUT, '4-testlab.png') });
+
+  // Opname van 10 s: aftellen 5 s + 10 s opnemen, daarna bewaren naar e2e-output/.
+  const cdp = await page.createCDPSession();
+  await cdp.send('Browser.setDownloadBehavior', { behavior: 'allow', downloadPath: OUT });
+  for (const f of fs.readdirSync(OUT)) if (f.startsWith('opname-')) fs.unlinkSync(path.join(OUT, f));
+  await page.select('.lab .row select', '10');
+  await page.evaluate(() => [...document.querySelectorAll('.lab button')].find((b) => b.textContent.includes('Opnemen'))?.click());
+  const dialog = await page.waitForSelector('.dialog', { timeout: 30000 }).then(() => true).catch(() => false);
+  check(dialog, 'opname loopt af en vraagt het echte aantal');
+  await page.screenshot({ path: path.join(OUT, '5-opname-bewaren.png') });
+  await page.evaluate(() => [...document.querySelectorAll('.dialog button')].find((b) => b.textContent.includes('Bewaar'))?.click());
+  let file = null;
+  for (let i = 0; i < 50 && !file; i++) {
+    await new Promise((r) => setTimeout(r, 200));
+    file = fs.readdirSync(OUT).find((f) => f.startsWith('opname-jumpingjack') && f.endsWith('.json'));
+  }
+  let recOk = false;
+  if (file) {
+    const rec = JSON.parse(fs.readFileSync(path.join(OUT, file), 'utf8'));
+    recOk = rec.format === 'idol-academy-opname' && rec.frames.length > 100 && rec.detector === 'jumpingjack';
+    console.log(`  opname: ${file}, ${rec.frames.length} beelden, app telde ${rec.detected}, ${Math.round(fs.statSync(path.join(OUT, file)).size / 1024)} KB`);
+  }
+  check(recOk, 'opnamebestand gedownload en geldig');
+
+  // Raak-oefening: er moet een doel over het beeld verschijnen; opnemen is hier uitgeschakeld.
+  await page.select('.lab-head select', 'raken');
+  // Raken vraagt enkel het bovenlichaam: de ruimte-check loopt dan opnieuw (1,5 s goed staan).
+  const targetShown = await page
+    .waitForSelector('.target', { timeout: 15000 })
+    .then(() => true)
+    .catch(async () => {
+      console.log('  laatste tip:', await page.$eval('.space-banner p', (p) => p.textContent).catch(() => '(geen)'));
+      return false;
+    });
+  const recDisabled = await page.evaluate(() => [...document.querySelectorAll('.lab button')].find((b) => b.textContent.includes('Opnemen'))?.disabled);
+  check(targetShown && recDisabled === true, 'raak-oefening toont een doel (opnemen uitgeschakeld)');
+  await page.screenshot({ path: path.join(OUT, '5b-raken.png') });
+
+  // Gsm-formaat (staand) ter controle van de opmaak.
+  await page.setViewport({ width: 412, height: 892, deviceScaleFactor: 2 }); // zonder isMobile: dat herlaadt de pagina
+  await new Promise((r) => setTimeout(r, 1500));
+  await page.screenshot({ path: path.join(OUT, '6-gsm-staand.png') });
 
   const violations = await page.evaluate(() => window.__csp);
   check(violations.length === 0, `geen CSP-schendingen${violations.length ? ': ' + violations.join(', ') : ''}`);

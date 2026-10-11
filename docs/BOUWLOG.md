@@ -184,3 +184,128 @@ Als dat niet volstaat, is MediaPipe in een Web Worker de volgende stap.
 
 **Nog te testen:** de oude Android-tablet (de echte ondergrens, go/no-go) en een laptop met
 echte webcam.
+
+---
+
+## Blok 2 — Bewegingsmotor + testlab  (2026-10-11 → wacht op test door Kristof)
+
+**Doel:** de bewegingen uit de acht games herkennen en tellen, met een ruimte-check en een pauze
+bij uit beeld, en dat meetbaar maken met opnames van echte bewegingen (#21, #31).
+
+**Gebouwd:**
+- **Normalisatie** (`body.ts`): punten in beeldhoogte-eenheden, en een stabiele romplengte als
+  schaal.
+- **Detectoren** (`src/motor/detectors/`):
+
+  | Detector | Game | Meet | Telt |
+  |---|---|---|---|
+  | `squat` | Jump Squad | dijbeen-verkorting (diepte) + enkels van de vloer | squats, sprongsquats als bonus |
+  | `knieen` | Spotlight Sprint | knieheffing per been t.o.v. de heup | stappen, tempo/min, links/rechts |
+  | `jumpingjack` | opwarming | 60% armen + 40% voetspreiding | jumping jacks |
+  | `stoot` | Beat Punch | reikwijdte schouder↔pols, snel gestrekt | stoten links/rechts/omhoog |
+  | `klim` | Sky Climb | hand boven het hoofd, afwisselend | klimstappen, knie mee als bonus |
+  | `stoel`/`ster`/`vliegtuig` | Freeze Pose | voorwaarden per houding | seconden vastgehouden, langste reeks |
+  | `ontwijk` | Laser Stage | schouders omlaag / enkels omhoog / heupen opzij | zone + aantal ontwijkingen |
+  | `energie` | Power-score | gemiddelde gewrichtssnelheid (romp/s) | werk; zone rustig→explosief |
+
+- **Aanwezigheid** (`presence.ts`): in / deels / weg. Pas na 0,8 s weg volgt een pauze, zodat één
+  gemist beeld niets doet.
+- **Ruimte-check** (`spaceCheck.ts`): één tip tegelijk (achteruit, dichterbij, naar het midden,
+  voeten in beeld…) en "klaar" na 1,5 s aan één stuk goed staan. Afhankelijk van
+  `full`/`upper` (#38).
+- **Opnames** (`recording.ts`) + **fixture-runner** (`fixtures.test.ts`) (#40).
+- **Raken** (`hit.ts`, `targetPractice.ts`): handen en voeten in *schermcoördinaten* (rekening
+  houdend met spiegelen) + "raakt een doel?". In het testlab: de oefening "Raken", telkens één
+  doel om aan te tikken. Dat is een proef voor Lightstick Catch, en meteen de controle dat
+  links/rechts klopt met wat het kind ziet. Opnemen is daar uitgeschakeld, omdat doelen
+  willekeurig zijn en dus niet af te spelen.
+- **Testlab** (`src/app/lab/`): bewegingskeuze, grote teller, toestand, signaalgrafiek met
+  drempels, energie, reset, en opnemen met 5 s aftellen en een bewaardialoog.
+- Motor: `setAutoSwitchAllowed`, zodat een modelwissel enkel tijdens de ruimte-check gebeurt
+  (#39). `PoseFrame` heeft nu `aspect`.
+- `Stage` toont nu een scherm bovenop het camerabeeld (render-prop `children`), en het meetpaneel
+  staat standaard ingeklapt.
+
+**Hoe het werkt (kern):**
+- *Hysterese* (`RepCounter`): een herhaling telt pas als het signaal boven `enter` komt én
+  daarna terug onder `exit` zakt, met een minimale duur. Trillen rond één drempel telt dus nooit
+  dubbel.
+- *Rechtop-referentie* (`WindowMax`): het maximum over 10 s via een monotone deque.
+- *Van voren meten* (#37): diepte en heffing via dijbeen-verkorting, niet via een 2D-kniehoek.
+- *Stoten:* van voren is een stoot recht naar de camera onzichtbaar. Daarom telt een snelle
+  strekking (< 0,7 → > 0,95 romp binnen 0,5 s) met de hand boven heuphoogte en niet naar
+  beneden. Armen laten hangen of traag strekken telt niet.
+- *Ontwijken:* de referentie "rechtop in het midden" schuift traag mee zolang je in het midden
+  staat.
+- Alle drempels staan als constanten bovenaan elk bestand (`SQUAT`, `HIGH_KNEES`, `PUNCH`,
+  `CLIMB`, `HOLD`, `DODGE`, `ENERGY`, `SPACE`, `PRESENCE`), zodat ze makkelijk af te stellen
+  zijn met de opnames.
+
+**Bestanden:**
+| Bestand | Wat |
+|---|---|
+| `src/motor/body.ts` | `BodyTracker`, `BodyPose`, meetkunde-hulpjes |
+| `src/motor/detectors/common.ts` | `Detector`-interface, `RepCounter`, `WindowMax`, `CadenceMeter` |
+| `src/motor/detectors/{squat,highKnees,jumpingJack,punch,climb,hold,dodge,energy}.ts` | de detectoren |
+| `src/motor/detectors/index.ts` | register met label, game, uitleg en `needs` |
+| `src/motor/presence.ts`, `spaceCheck.ts` | aanwezigheid, ruimte-check |
+| `src/motor/recording.ts` | opnameformaat, opbouwen, teruglezen, bestandsnaam |
+| `src/motor/testing/synthPose.ts` | synthetisch poppetje (2D-projectie van voren) voor tests |
+| `src/motor/detectors/detectors.test.ts`, `guidance.test.ts`, `fixtures.test.ts` | tests |
+| `src/app/lab/Lab.tsx`, `Sparkline.ts` | testlab |
+| `test-fixtures/README.md` | hoe opnames daar komen, privacy |
+
+**Beslissingen:** #37–#41 (voorlopig).
+
+**Getest:**
+- **81 unit tests.** Elke detector krijgt nagebootste bewegingen met een bekend aantal, plus
+  "valstrikken" die níet mogen tellen:
+  - knikje, springen bij knieheffen, enkel armen bij jumping jacks;
+  - armen laten hangen of traag strekken bij stoten;
+  - steeds dezelfde hand bij klimmen;
+  - ster met de armen omlaag.
+  Ook de ruimte-check-tips, de pauzevertraging en het opname-formaat zitten erin.
+- **E2E** (headless Chrome met het jumping-jack-testfilmpje):
+  - de ruimte-check wordt klaar;
+  - het testlab telt **3 jumping jacks in ~9 s, en dat klopt**: het filmpje bevat ~3 echte
+    jumping jacks per lus van 8 s, en daarna zwaait de figuur met één arm, wat terecht níet
+    telt;
+  - opnemen (10 s) → dialoog → download → geldig bestand (540 beelden, 538 KB bij ~54 fps
+    headless);
+  - geen CSP-schendingen, geen externe verzoeken, geen consolefouten;
+  - opmaak gecontroleerd op laptop en op gsm-formaat (staand).
+- **Nog te doen door Kristof:** elke beweging testen en per beweging minstens één opname met het
+  echte aantal (zie `test-fixtures/README.md`).
+
+**Problemen en oplossingen:**
+1. *Ontwerp:* de 2D-kniehoek bleek van voren onbruikbaar, dus gekozen voor dijbeen-verkorting
+   (#37). Dat werd al vóór de bouw gezien, niet pas achteraf.
+2. *Test:* één knieheffingstest faalde (19 i.p.v. 20). Oorzaak: de nagebootste reeks stopte
+   midden in de laatste stap. Dat was een fout in de test, niet in de detector; de test is
+   aangepast.
+3. *E2E:* naar "mobiel" omschakelen in Puppeteer herlaadt de pagina. Daarom wordt enkel de
+   schermgrootte aangepast.
+4. *Ruimte-check bovenlichaam (gevonden door de e2e):* bij "Raken" vroeg de check "kom
+   dichterbij" aan iemand op de gewone afstand. "Bovenlichaam volstaat" moet betekenen dat
+   dichterbij *mag*, niet dat het *moet*. De ondergrens is verlaagd (0,3 → 0,2 van de
+   beeldhoogte voor hoofd→heupen), met een test die de gewone afstand voor beide soorten goed
+   keurt.
+5. *Energie hing af van de beeldsnelheid (gezien op een screenshot):* de energie berekende
+   snelheid van beeld tot beeld. Het normale trillen van de punten, gedeeld door een heel klein
+   tijdsverschil, gaf schijnbaar veel energie: "explosief" (7,5) bij rustig armzwaaien in de
+   e2e op ~56 fps. Nu wordt de verplaatsing gemeten over ~100 ms. Twee nieuwe tests:
+   - stilstaan met realistisch trillen blijft "rustig" op 15, 30 én 60 fps;
+   - dezelfde beweging geeft op 15 en 60 fps hetzelfde (±25%).
+   Gecontroleerd dat de oude code voor die test zakt (0,72 op 30 fps).
+
+**Open punten:**
+- De drempels zijn een eerste inschatting. Ze worden afgesteld met echte opnames van kinderen.
+- De zones van de bewegingsenergie zijn voorlopig. In de e2e piekte de energie tot ~6,9
+  ("explosief") bij een 3D-figuur die schokkerig beweegt; afstellen in blok 4 (#26).
+- Floor Crawl (krab/beren-loop, experimenteel) heeft nog geen detector → blok 7.
+
+**Les voor B-world:**
+- Neem `src/motor/` (incl. `detectors/`, `testing/` en de tests) letterlijk over. Er zit geen React
+  in.
+- Neem `test-fixtures/` mee: dat zijn de echte bewegingen waarop de drempels afgesteld zijn.
+- Meet van voren nooit met 2D-hoeken voor bewegingen in de diepte (#37).

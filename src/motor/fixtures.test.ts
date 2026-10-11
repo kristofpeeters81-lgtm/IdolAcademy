@@ -13,7 +13,11 @@ import { parseRecording, recordingToFrames } from './recording';
  * Marge: ±1, of ±10% bij grotere aantallen. Houdingen (seconden) krijgen ±1,5 s.
  */
 const DIR = path.resolve('test-fixtures');
-const files = fs.existsSync(DIR) ? fs.readdirSync(DIR).filter((f) => f.endsWith('.json')) : [];
+/** Ook `test-fixtures/lokaal/` (niet in git: opnames die niet publiek mogen). */
+const files = ['', 'lokaal']
+  .map((sub) => path.join(DIR, sub))
+  .filter((dir) => fs.existsSync(dir))
+  .flatMap((dir) => fs.readdirSync(dir).filter((f) => f.endsWith('.json')).map((f) => path.relative(DIR, path.join(dir, f))));
 
 describe('opnames in test-fixtures/', () => {
   if (files.length === 0) {
