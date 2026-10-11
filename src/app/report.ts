@@ -32,7 +32,14 @@ export function buildReport(stats: EngineStats, camera: CameraInfo | null, appVe
       app: `Idol Academy ${appVersion}`,
       tijdstip: new Date().toISOString(),
       toestel: deviceSummary(),
-      camera: camera ? { resolutie: `${camera.width}x${camera.height}`, gemeldeFps: camera.frameRate, kant: camera.facing } : null,
+      camera: camera
+        ? {
+            resolutie: `${camera.width}x${camera.height}`,
+            stand: camera.height > camera.width ? 'staand' : 'liggend',
+            gemeldeFps: camera.frameRate,
+            kant: camera.facing,
+          }
+        : null,
       meting: {
         model: stats.variant,
         modelModus: stats.mode,
@@ -45,6 +52,20 @@ export function buildReport(stats: EngineStats, camera: CameraInfo | null, appVe
         zichtbareLichaamspunten: `${stats.visibleBodyPoints}/9`,
         laatsteFout: stats.lastError,
       },
+      // Over de laatste minuut: betrouwbaarder dan de momentopname hierboven, want bij het
+      // tikken op "Meetrapport" sta je vlak bij het toestel (en dus half uit beeld).
+      laatsteMinuut: stats.session
+        ? {
+            seconden: Math.round(stats.session.seconds),
+            beelden: stats.session.frames,
+            gemiddeldeFps: r(stats.session.avgFps),
+            traagsteSecondeFps: stats.session.minFps,
+            rekentijdGemiddeldMs: r(stats.session.avgInferenceMs),
+            rekentijdP95Ms: r(stats.session.p95InferenceMs),
+            heleLichaamInBeeld: `${Math.round(stats.session.fullBodyShare * 100)}%`,
+            meestalZichtbaar: `${stats.session.typicalVisible}/9`,
+          }
+        : null,
     },
     null,
     2,

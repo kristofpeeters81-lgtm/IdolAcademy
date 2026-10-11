@@ -14,8 +14,9 @@ testen, en pas na Kristofs akkoord begint het volgende blok. Een blok is pas af 
 - ✅ Documentatiestructuur opgezet
 - ✅ Plan en alle beslissingen #1–#32 bevestigd door Kristof (2026-10-11)
 - ✅ Embed-API en skin-systeem geschrapt, de app wordt herbouwd in B-world (#33); MediaPipe-licentie gecontroleerd (#34)
-- 🧪 **Blok 1 (Fundament) gebouwd**: wacht op test door Kristof op de toestellen (go/no-go)
-- Voorlopige beslissingen te bevestigen: #35 (MediaPipe 0.10.21), #36 (bestanden/licentie)
+- 🧪 **Blok 1 (Fundament)**: getest op 1 toestel (high-end Android-gsm: 34 fps, vlot). Bijgestuurd: meetrapport
+  over de laatste minuut + doordetecteren tijdens het laden van een model. **Nog te testen: oude tablet (go/no-go) + laptop.**
+- ✅ #35 en #36 bevestigd door Kristof
 
 ## Bouwblokken
 

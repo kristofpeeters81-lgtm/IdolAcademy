@@ -45,5 +45,5 @@ nieuw nummer; de oude krijgt status `vervangen door #x` en blijft staan.
 | 32 | 2026-10-11 | Thema-botsing met B-world oplossen via een verwisselbare "skin" | vervangen door #33 |
 | 33 | 2026-10-11 | Geen embed-API en geen skin-systeem: B-world herbouwt de app indien goed bevonden. De motor blijft wel los van de UI | beslist |
 | 34 | 2026-10-11 | MediaPipe Pose (code + model) mag gebruikt worden in een app die je commercieel verkoopt (Apache 2.0) | beslist |
-| 35 | 2026-10-11 | MediaPipe vastgepind op 0.10.21: versies vanaf 1.0.0 sturen telemetrie naar Google | voorlopig |
-| 36 | 2026-10-11 | Modellen in git, WASM bij elke build gekopieerd uit npm; licentietekst mee gepubliceerd | voorlopig |
+| 35 | 2026-10-11 | MediaPipe vastgepind op 0.10.21: versies vanaf 1.0.0 sturen telemetrie naar Google | beslist |
+| 36 | 2026-10-11 | Modellen in git, WASM bij elke build gekopieerd uit npm; licentietekst mee gepubliceerd | beslist |

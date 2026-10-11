@@ -466,6 +466,8 @@ zonder `^`, zodat een `npm install` nooit stilletjes opwaardeert. De pose-modell
    `clearcut` bevat. (`type.googleapis.com/…` komt wel voor, maar dat zijn protobuf-typenamen
    zonder `https://`, geen netwerkadressen.)
 
+**Bevestigd door Kristof (2026-10-11):** "als dit nodig is om niks door te sturen, is dit OK".
+
 **Voor B-world:** gebruik dezelfde vaste versie (of controleer een nieuwere versie eerst met
 dezelfde grep). Zie `docs/HERBOUW-BWORLD.md` §2.
 
@@ -483,6 +485,8 @@ dezelfde grep). Zie `docs/HERBOUW-BWORLD.md` §2.
 - **Licentietekst** (Apache 2.0) staat naast de bestanden in `public/mediapipe/LICENSE.txt` en
   wordt mee gepubliceerd. Dat is al nodig vanaf de eerste publicatie (#34). Het
   "Licenties"-scherm in de app volgt in blok 9.
+
+**Bevestigd door Kristof (2026-10-11).**
 
 **Waarom de modellen in git:** de URL "latest" kan veranderen. Met een vaste kopie test iedereen
 hetzelfde model, en de build hangt niet af van Google's servers.

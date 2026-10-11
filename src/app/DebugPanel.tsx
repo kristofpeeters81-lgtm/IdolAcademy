@@ -77,6 +77,14 @@ export function DebugPanel(p: Props) {
         <dd>{p.camera ? `${p.camera.width}×${p.camera.height}` : '–'}</dd>
         <dt>Lichaam</dt>
         <dd className={s.visibleBodyPoints === 9 ? 'good' : 'ok'}>{s.visibleBodyPoints}/9 zichtbaar</dd>
+        {s.session && (
+          <>
+            <dt>Laatste min</dt>
+            <dd>
+              {s.session.avgFps.toFixed(0)} fps (min {s.session.minFps}) · lichaam {Math.round(s.session.fullBodyShare * 100)}%
+            </dd>
+          </>
+        )}
       </dl>
       {s.lastError && <p className="debug-error">{s.lastError}</p>}
 

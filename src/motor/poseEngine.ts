@@ -1,6 +1,7 @@
 import { countVisibleBodyPoints } from './landmarks';
 import { decideAutoModel } from './modelChoice';
 import { PoseTracker } from './poseTracker';
+import { SessionRecorder, type SessionSummary } from './sessionStats';
 import { RateMeter, RollingAverage } from './stats';
 import type { Delegate, ModelVariant, PoseFrame } from './types';
 
@@ -31,6 +32,8 @@ export interface EngineStats {
   /** Werd full in auto-modus afgekeurd (te traag)? */
   fullRejected: boolean;
   lastError: string | null;
+  /** Samenvatting van de laatste minuut met het huidige model (null = nog te weinig data). */
+  session: SessionSummary | null;
 }
 
 export type FrameListener = (frame: PoseFrame) => void;
@@ -51,6 +54,7 @@ export class PoseEngine {
   private readonly cameraRate = new RateMeter();
   private readonly detectionRate = new RateMeter();
   private readonly inference = new RollingAverage(30);
+  private readonly session = new SessionRecorder();
 
   constructor(
     private readonly video: HTMLVideoElement,
@@ -104,6 +108,7 @@ export class PoseEngine {
       modelLoadMs: this.modelLoadMs,
       fullRejected: this.fullRejected,
       lastError: this.lastError,
+      session: this.session.summary(now),
     };
   }
 
@@ -112,7 +117,9 @@ export class PoseEngine {
     if (video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA || video.currentTime === this.lastVideoTime) return;
     this.lastVideoTime = video.currentTime;
     this.cameraRate.tick(now);
-    if (!this.tracker || this.loading) return;
+    // Tijdens het laden van een ander model blijft het huidige model gewoon detecteren;
+    // pas als het nieuwe klaar (en opgewarmd) is, wordt gewisseld.
+    if (!this.tracker) return;
 
     let frame: PoseFrame;
     try {
@@ -124,6 +131,7 @@ export class PoseEngine {
     this.detectionRate.tick(now);
     this.inference.push(frame.inferenceMs);
     this.visibleBodyPoints = countVisibleBodyPoints(frame.landmarks);
+    this.session.push({ t: now, inferenceMs: frame.inferenceMs, visible: this.visibleBodyPoints });
     for (const listener of this.listeners) listener(frame);
 
     if (this.mode === 'auto' && now - this.lastAutoCheck > 1000) {
@@ -176,6 +184,7 @@ export class PoseEngine {
       this.modelSince = performance.now();
       this.detectionRate.reset();
       this.inference.reset();
+      this.session.reset();
     }
   }
 }

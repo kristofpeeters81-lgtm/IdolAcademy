@@ -67,8 +67,19 @@ valkuilen per toestel.
 (eventtype, payload). Te bevestigen met de B-world-beslissingen.
 
 ## 8. Testresultaten en lessen
-*(Blok 1+)* Per toestel: fps, nauwkeurigheid per detector, en wat kinderen leuk vonden. Plus
-wat je in B-world anders zou doen.
+*(Blok 1+, groeit mee)* Per toestel: fps, nauwkeurigheid per detector, en wat kinderen leuk
+vonden. Plus wat je in B-world anders zou doen.
+
+| Toestel | Model | Fps | Rekentijd | Opmerking |
+|---|---|---|---|---|
+| Android-gsm, Adreno 660 (high-end 2021), Chrome 154 | lite (GPU) | 33,7 | 28 ms | vlot; op 2–3 m hele lichaam in beeld; full niet gekozen (te krap) |
+
+**Lessen tot nu toe:**
+- Meet over een periode, niet als momentopname. Wie de knop indrukt, staat te dicht bij.
+- Een high-end gsm draait lite op ~28 ms. Full is dus geen standaardkeuze op mobiel; lite is de
+  basis.
+- Laat het huidige model doordetecteren terwijl een ander laadt.
+- Een model aanmaken blokkeert kort de hoofdthread. Kies het model dus vóór de game begint.
 
 ## 9. Stappenplan voor de herbouw
 *(Blok 10)* Een genummerde checklist.

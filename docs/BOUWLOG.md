@@ -133,3 +133,54 @@ app komen). Beide nog voorlopig.
 - Precache in de service worker de SIMD-WASM + het lite-model (~19 MB). Het full-model en de
   no-SIMD-WASM worden pas bewaard bij het eerste gebruik.
 - Laat een modelwissel nooit midden in een game gebeuren (hapering van ~0,5–1 s).
+
+### Blok 1 — toesteltest 1 + bijsturing (2026-10-11)
+
+**Toestel:** Android-gsm met Qualcomm Adreno 660 (Snapdragon 888-klasse, high-end uit 2021),
+4 GB RAM, Chrome 154. Chrome toont in de userAgent bewust geen exact model ("Android 10; K"),
+dus merk en model zijn onbekend. Camera: frontcamera, **480×640 = gsm staand** (niet liggend
+zoals de uitleg aanraadt).
+
+| Meting | Waarde | Betekenis |
+|---|---|---|
+| Detectie-fps | 33,7 (= camera-fps) | elk camerabeeld wordt verwerkt, ruim speelbaar |
+| Rekentijd lite (GPU) | 28–29 ms | marge tot ~35 fps; het toestel is dus niet "ruim" |
+| Auto-modelkeuze | bleef op lite | correct: 28 ms > drempel 15 ms voor full |
+| Laadtijd model | 3,5 s | eerste keer, inclusief WASM-start |
+| Zichtbare punten | 6/9 en 3/9 | momentopname bij het tikken op de knop (zie hieronder) |
+
+**Bevinding van Kristof:** "dit lijkt vlot te werken". Dichter bij het toestel worden minder punten
+gedetecteerd, omdat het lichaam niet meer volledig in beeld is. Op 2–3 m is het OK.
+
+**Analyse:**
+- 6/9 en 3/9 is géén detectieprobleem. Wie op "Meetrapport" tikt, staat noodzakelijk vlak bij het
+  toestel. De momentopname meet dus altijd het slechtste moment.
+- Dichterbij = minder punten is de fysica van één camera. Dat wordt in blok 2 opgevangen:
+  1. de ruimte-check leidt het kind naar de juiste afstand;
+  2. elke detector/game declareert welke punten hij nodig heeft. Games die enkel het
+     bovenlichaam gebruiken (bv. Beat Punch, Lightstick Catch met handen) kunnen dan ook op
+     ~1,5 m gespeeld worden, en enkel games met benen/sprongen vragen 9/9.
+- Een staande gsm toont meer hoogte en dus sneller het hele lichaam op korte afstand. Liggend is
+  breder (zijstappen, Laser Stage). Dit wordt een keuze per game, te bekijken in blok 2.
+
+**Aangepast na deze test:**
+1. **Meetrapport en meetpaneel tonen nu ook de laatste minuut** (`src/motor/sessionStats.ts`):
+   - gemiddelde fps en de traagste volledige seconde;
+   - gemiddelde en p95-rekentijd;
+   - % beelden met het hele lichaam in beeld, en het "meestal zichtbare" aantal punten.
+   Plus de schermstand (staand/liggend) bij de camera. Zo vertekent het tikken op de knop de
+   meting niet meer.
+2. **Bug gevonden dankzij die samenvatting:** tijdens het laden van een ander model (bv. de
+   auto-opwaardering naar full) stopte de detectie volledig. Nu blijft het huidige model
+   detecteren tot het nieuwe klaar en opgewarmd is. Traagste seconde bij full in de e2e: van
+   3 naar 23 fps.
+3. In de samenvatting telde de eerste seconde eerst niet mee voor "traagste seconde", waardoor
+   het gemiddelde lager kon liggen dan het minimum. Rechtgezet, met een regressietest. De tests
+   gaan van 25 naar 32.
+
+**Nog open (→ blok 2):** een model *aanmaken* blokkeert de hoofdthread kort (shaders, graaf).
+De auto-modelkeuze moet dus gebeuren tijdens de ruimte-check/opwarming, nooit tijdens een game.
+Als dat niet volstaat, is MediaPipe in een Web Worker de volgende stap.
+
+**Nog te testen:** de oude Android-tablet (de echte ondergrens, go/no-go) en een laptop met
+echte webcam.
