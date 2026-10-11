@@ -560,7 +560,7 @@ drempel wordt meteen getoetst aan echte bewegingen van echte kinderen.
 **Beslissing:** Er komt een extra detector voor jumping jacks: openheid = 60% armen + 40% benen.
 Hij staat niet in de lijst van acht games (#12), maar hoort bij de korte opwarming (#18).
 
-## 42. Visuele stijl (open)
+## 42. Visuele stijl — *vervangen door #43*
 
 **Status:** open. Wacht op Kristofs keuze. Het voorbeeldblad staat live op
 `https://kristofpeeters81-lgtm.github.io/IdolAcademy/stijl/` (bron: `public/stijl/index.html`).
@@ -587,3 +587,66 @@ de HUD te druk van op 2–3 m? Gamenamen Engels of Nederlands (#27/#28)?
 
 **Na de keuze:** de gekozen stijl wordt een nieuwe beslissing, en pas dan wordt ze in de app
 ingebouwd (blok 4), zoals afgesproken in #22.
+
+## 43. Stijl A "Neon Stage"
+
+**Beslissing (Kristof, 2026-10-11):** "bouw maar verder met stijl A". Stijl A uit het
+stijlvoorbeeld (#42) wordt de stijl van de app:
+- een donker podium met neon roze, cyaan, violet, lime en amber;
+- letters: Unbounded (titels, cijfers, knoppen) + Outfit (tekst);
+- gloed rond knoppen en cijfers.
+
+**Aangenomen zonder aparte bevestiging** (Kristof antwoordde enkel op de stijlvraag):
+- coach Lumi blijft zoals ze is;
+- de gamenamen blijven Engels (#27);
+- de HUD blijft zoals in het voorbeeld.
+Dat kan nog wijzigen zonder veel werk.
+
+**Gevolgen:**
+- De tokens staan als CSS-variabelen in `src/app/styles.css` (`:root`), dezelfde waarden als in
+  `public/stijl/`.
+- De lettertypes zitten in de bundel (`src/app/fonts/`, met de OFL-licentie erbij) en worden
+  offline mee bewaard.
+- Lumi is een React-component (`CoachLumi.tsx`).
+
+## 44. Vast verloop per game
+
+**Voorstel:** elke game volgt dezelfde stappen (`src/app/game/GameRunner.tsx`):
+1. **Uitleg:** Lumi en 2–3 korte zinnen, plus "jouw doel" (#30). Een volwassene tikt
+   "Ik ben klaar!", en het kind gaat op zijn plek staan.
+2. **Ruimte-check** (#18, #38): tips tot de speler goed staat, met de nodige punten per game.
+3. **3-2-1-GO**.
+4. **Spelen:** de tijd loopt enkel als de speler in beeld is. Uit beeld = pauze (#18). Het
+   model wisselt niet (#39).
+5. **Resultaat:** sterren, % van het leeftijdsdoel, tijd per Power-zone, extra's, en de knoppen
+   "Nog eens!" en "Menu".
+
+**Waarom:** de kinderen leren het één keer, en elke nieuwe game (blok 6/7) hoeft enkel zijn eigen
+spelregels en HUD-element te leveren. Voor de opwarming en de rustpauzes (blok 8) komt er later
+een stap vóór of na een game bij.
+
+## 45. Spotlight Sprint: regels, doelen, sterren
+
+**Voorstel:**
+- **20 s** knieën hoog ter plaatse (#29: kort en explosief). Een stap = één knie omhoog en terug
+  (detector `knieen`, #37).
+- **Leeftijdsdoel** in stappen (beide benen samen) in 20 s:
+
+  | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13+ |
+  |---|---|---|---|---|---|---|---|
+  | 35 | 38 | 41 | 44 | 47 | 50 | 53 | 55 |
+
+  Dat is ±1,75 stappen/s voor een 6-jarige tot ±2,75/s vanaf 13 jaar. Het is een **inschatting**:
+  af te stellen met opnames van echte kinderen (#40).
+- **Sterren:** ≥ 50% ★ · ≥ 80% ★★ · ≥ 100% ★★★ (`STAR_THRESHOLDS`, voor alle games).
+- **Spotlight:** elke stap vult een meter en maakt de lichtbundel breder en feller (kleur = de
+  huidige Power-zone). Bij 25/50/75% verschijnen "GOED ZO!", "HALFWEG!" en "BIJNA!". Bij het doel
+  komt "SPOTLIGHT ON!" en pulseert de bundel. Daarna volgt elke 10 stappen een "PERFECT!".
+- Lumi moedigt aan met teksten die afhangen van de tijd en het tempo. Gesproken versie: blok 5.
+
+## 46. Leeftijd kiezen en onthouden
+
+**Voorstel:** op het startscherm kies je 6–12 of 13+. De games blijven grijs tot er een
+leeftijd gekozen is. De keuze wordt in de browser onthouden (`localStorage`). Lukt dat niet
+(privévenster), dan kies je ze gewoon opnieuw. In de estafette (blok 8) krijgt elke speler zijn
+eigen leeftijd (#10).

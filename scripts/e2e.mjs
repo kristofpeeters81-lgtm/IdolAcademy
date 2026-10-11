@@ -70,7 +70,13 @@ try {
   check(csp.includes("connect-src 'self'"), 'CSP aanwezig met connect-src self');
   await page.screenshot({ path: path.join(OUT, '1-start.png') });
 
-  await page.click('button.big');
+  // Startscherm (blok 4): leeftijd kiezen, dan naar het testlab.
+  const clickText = (sel, text) =>
+    page.evaluate((sel, text) => [...document.querySelectorAll(sel)].find((b) => b.textContent.trim() === text)?.click(), sel, text);
+  await clickText('.ages button', '8');
+  const playable = await page.$eval('.card:not(.soon)', (c) => !c.disabled).catch(() => false);
+  check(playable, 'startscherm: na leeftijdskeuze is Spotlight Sprint speelbaar');
+  await clickText('.home-foot button', 'Testlab');
   // Meetpaneel staat standaard ingeklapt (vanaf blok 2): openklikken.
   await page.waitForSelector('.debug-toggle', { timeout: 60000 });
   await page.click('.debug-toggle');
@@ -162,6 +168,25 @@ try {
   const recDisabled = await page.evaluate(() => [...document.querySelectorAll('.lab button')].find((b) => b.textContent.includes('Opnemen'))?.disabled);
   check(targetShown && recDisabled === true, 'raak-oefening toont een doel (opnemen uitgeschakeld)');
   await page.screenshot({ path: path.join(OUT, '5b-raken.png') });
+
+  // --- Spotlight Sprint (blok 4): volledige ronde ---
+  await page.evaluate(() => [...document.querySelectorAll('.debug button')].find((b) => b.textContent === 'Stop')?.click());
+  await page.waitForSelector('.home', { timeout: 10000 });
+  await page.click('.card:not(.soon)');
+  const intro = await page.waitForSelector('.game-intro', { timeout: 60000 }).then(() => true).catch(() => false);
+  check(intro, 'game: uitlegscherm met Lumi');
+  await page.screenshot({ path: path.join(OUT, '7-game-uitleg.png') });
+  await page.evaluate(() => [...document.querySelectorAll('.game-intro button')].find((b) => b.textContent.includes('klaar'))?.click());
+  const counting = await page.waitForSelector('.countdown', { timeout: 30000 }).then(() => true).catch(() => false);
+  check(counting, 'game: ruimte-check klaar, aftellen start');
+  await new Promise((r) => setTimeout(r, 6000));
+  await page.screenshot({ path: path.join(OUT, '8-game-spelen.png') });
+  const hud = await page.$('.hud-count').then((h) => h !== null);
+  check(hud, 'game: HUD tijdens het spelen');
+  const done = await page.waitForSelector('.result', { timeout: 60000 }).then(() => true).catch(() => false);
+  const summary = done ? await page.$eval('.result-main', (r) => r.textContent.replace(/\s+/g, ' ').trim()) : '';
+  check(done, `game: resultaatscherm na 20 s (${summary})`);
+  await page.screenshot({ path: path.join(OUT, '9-game-resultaat.png') });
 
   // Gsm-formaat (staand) ter controle van de opmaak.
   await page.setViewport({ width: 412, height: 892, deviceScaleFactor: 2 }); // zonder isMobile: dat herlaadt de pagina

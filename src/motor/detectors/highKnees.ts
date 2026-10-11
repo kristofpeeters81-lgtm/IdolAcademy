@@ -32,6 +32,21 @@ export class HighKneesDetector implements Detector {
     return new RepCounter(HIGH_KNEES.enter, HIGH_KNEES.exit, HIGH_KNEES.minRepMs);
   }
 
+  /** Totaal aantal stappen (beide benen). */
+  get steps(): number {
+    return this.legs[0].reps.count + this.legs[1].reps.count;
+  }
+
+  /** Stappen per been [links, rechts] (links/rechts van de speler). */
+  get perLeg(): [number, number] {
+    return [this.legs[0].reps.count, this.legs[1].reps.count];
+  }
+
+  /** Stappen per minuut over de laatste 5 s. */
+  get tempo(): number {
+    return this.cadence.perMinute(this.t);
+  }
+
   update(b: BodyPose): void {
     this.t = b.t;
     for (const leg of this.legs) {

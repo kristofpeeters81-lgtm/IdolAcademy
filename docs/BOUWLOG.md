@@ -312,7 +312,7 @@ bij uit beeld, en dat meetbaar maken met opnames van echte bewegingen (#21, #31)
 
 ---
 
-## Blok 3 — Stijlvoorbeeld  (2026-10-11 → wacht op keuze van Kristof)
+## Blok 3 — Stijlvoorbeeld  (2026-10-11 → ✅ stijl A gekozen, #43)
 
 **Doel:** de visuele stijl laten kiezen *vóór* er iets in de app ingebouwd wordt (#22).
 
@@ -350,3 +350,70 @@ gebouwd, samen met de eerste echte game (blok 4).
 **Les voor B-world:** B-world heeft een eigen stijl (agenten), dus dit blad is vooral een
 voorbeeld van de *aanpak*. Thema-tokens als CSS-variabelen, en één SVG-personage waarvan de
 kleuren via variabelen wisselen, zijn in B-world even bruikbaar.
+
+---
+
+## Blok 4 — Eerste game: Spotlight Sprint  (2026-10-11 → wacht op test door Kristof)
+
+**Doel:** één game volledig van begin tot eind, in stijl A (#43), als sjabloon voor de andere
+zeven.
+
+**Gebouwd:**
+- **Stijl A in de app:** tokens, lettertypes (gebundeld) en knoppen. De lab-, debug- en
+  dialoogknoppen gebruiken bewust het gewone lettertype (compacter).
+- **Startscherm** (`Home.tsx`): Lumi, het woordmerk, leeftijdskeuze 6–13+ (#46), de 8
+  gamekaarten (enkel Spotlight Sprint speelbaar, de rest "Binnenkort") en een knop naar het
+  testlab.
+- **Spellogica** (`src/games/`, zonder React):
+  - `types.ts`: `GameSession` (update/view/result), `GameView`, `GameResult`, `GameInfo`;
+  - `scoring.ts`: leeftijden, `goalFor`, `percentOf`, `starsFor`, `ZoneTimer`;
+  - `spotlightSprint.ts`: spelregels, mijlpalen, Lumi-teksten (#45);
+  - `catalog.ts`: de acht games.
+- **Spelverloop** (`GameRunner.tsx`, #44): uitleg → ruimte-check → aftellen → spelen (pauze bij
+  uit beeld) → resultaat.
+- **HUD** (`Hud.tsx`): timer-ring (rood in de laatste 5 s), grote teller, Power-meter met 4
+  zones, Lumi met tekstballon, en popups ("PERFECT!").
+- **Spotlight** (`SpotlightBeam.tsx`): lichtbundel + vulmeter.
+- **Resultaat** (`ResultScreen.tsx`): sterren, aantal, % van het doel, een balk met de tijd per
+  Power-zone, beste tempo, % intens/explosief, links/rechts, en Lumi's reactie.
+- Knieheffingsdetector: `steps`, `tempo` en `perLeg` als getallen (geen tekst meer ontleden).
+- Het fps-bolletje van het meetpaneel staat in een game onderaan in het midden (rechtsboven
+  staat de teller), en in het testlab rechtsboven.
+
+**Hoe het werkt:**
+- De game krijgt per beeld `update(body, playing)`. `playing` is enkel waar in de fase
+  "spelen" en als de speler niet `weg` is. De tijd loopt met de tijdstempels van de beelden,
+  met max. 200 ms per stap, zodat een hapering de klok niet laat verspringen.
+- De React-schil vraagt 10×/s `view()` op. Gebeurtenissen (popups) worden daarbij één keer
+  afgegeven en na 1,3 s weer weggehaald.
+- Faseovergangen gebeuren vanuit de beeld-callback. De fase wordt meteen in een ref vastgezet,
+  zodat het volgende beeld dezelfde overgang niet opnieuw start.
+
+**Bestanden:** `src/games/{types,scoring,spotlightSprint,catalog}.ts` + `games.test.ts`;
+`src/app/{Home,CoachLumi,GameIcon,storage}.tsx|ts`;
+`src/app/game/{GameRunner,Hud,SpotlightBeam,ResultScreen}.tsx`; `src/app/fonts/`; `styles.css`
+(stijl A).
+
+**Beslissingen:** #43 (beslist), #44–#46 (voorlopig).
+
+**Getest:**
+- **89 unit tests** (+8). Spotlight Sprint met nagebootst knieheffen:
+  - telt ~80 stappen in 20 s bij 4 stappen/s, en stopt exact na 20 s;
+  - de mijlpalen komen in de juiste volgorde;
+  - 5 s pauze laat de klok stilstaan;
+  - stilstaan levert 0 sterren op.
+  Daarnaast de scoreregels en de catalogus.
+- **E2E**: een volledige ronde op het startscherm (leeftijd kiezen → kaart → uitleg → "Ik ben
+  klaar!" → ruimte-check → aftellen → HUD → resultaat na 20 s), naast alle eerdere controles.
+  Het testfilmpje (jumping jacks) haalt **0 stappen**, en dat is juist: jumping jacks zijn geen
+  knieheffingen. **Echte knieheffingen in de game moeten nog getest worden.**
+- Screenshots van het startscherm, de uitleg, het spelen en het resultaat bekeken. Het
+  fps-bolletje viel over de teller en is verplaatst.
+
+**Open punten:**
+- De leeftijdsdoelen (#45) en de Power-zones (#26) zijn inschattingen. Afstellen met opnames.
+- Geluid en de gesproken Lumi volgen in blok 5.
+
+**Les voor B-world:** neem `src/games/` over (spelregels, scores, sessie-interface). De React-schil
+(`src/app/game/`) toont hoe je het verloop opbouwt, maar de visuals worden in B-world opnieuw
+gemaakt.

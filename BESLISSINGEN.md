@@ -52,4 +52,8 @@ nieuw nummer; de oude krijgt status `vervangen door #x` en blijft staan.
 | 39 | 2026-10-11 | Automatische modelwissel enkel tijdens de ruimte-check, nooit tijdens het tellen/spelen | voorlopig |
 | 40 | 2026-10-11 | Testlab met opname-knop; opnames in `test-fixtures/` worden automatisch tests (marge ±1/±10%, houdingen ±1,5 s); opnames van kinderen enkel publiek met toestemming | voorlopig |
 | 41 | 2026-10-11 | Jumping jacks als extra detector voor de opwarming (#18) | voorlopig |
-| 42 | 2026-10-11 | Visuele stijl: A "Neon Stage", B "Holo Pop" of een mix; coach Lumi; Engelse of Nederlandse gamenamen | open |
+| 42 | 2026-10-11 | Visuele stijl: A "Neon Stage", B "Holo Pop" of een mix; coach Lumi; Engelse of Nederlandse gamenamen | vervangen door #43 |
+| 43 | 2026-10-11 | Stijl A "Neon Stage" gekozen; coach Lumi en Engelse gamenamen blijven (niet apart bevestigd) | beslist |
+| 44 | 2026-10-11 | Vast verloop per game: uitleg → ruimte-check → 3-2-1-GO → spelen (pauze bij uit beeld) → resultaat | voorlopig |
+| 45 | 2026-10-11 | Spotlight Sprint: 20 s knieën hoog, leeftijdsdoelen 35–55 stappen, sterren bij 50/80/100% | voorlopig |
+| 46 | 2026-10-11 | Leeftijd wordt op het startscherm gekozen en per toestel onthouden (lokaal) | voorlopig |

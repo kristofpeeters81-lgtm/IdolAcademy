@@ -1,31 +1,41 @@
 import { useState } from 'react';
+import { gameInfo } from '../games/catalog';
+import type { Age } from '../games/scoring';
+import type { GameId } from '../games/types';
+import { GameRunner } from './game/GameRunner';
+import { Home } from './Home';
 import { Lab } from './lab/Lab';
 import { Stage } from './Stage';
+import { loadAge, saveAge } from './storage';
 
-/**
- * Blok 2: startscherm → camerabeeld met het testlab (bewegingen tellen + opnemen).
- * De echte Idol Academy-stijl volgt na goedkeuring van het stijlvoorbeeld (blok 3).
- */
+type Screen = { name: 'home' } | { name: 'lab' } | { name: 'game'; id: GameId };
+
+/** Schermen: startmenu → (game | testlab). Camera en motor starten pas bij een game of het testlab. */
 export function App() {
-  const [running, setRunning] = useState(false);
+  const [screen, setScreen] = useState<Screen>({ name: 'home' });
+  const [age, setAge] = useState<Age | null>(() => loadAge());
+  const home = () => setScreen({ name: 'home' });
 
-  if (running) return <Stage onExit={() => setRunning(false)}>{(ctx) => <Lab {...ctx} />}</Stage>;
+  if (screen.name === 'lab') {
+    return <Stage onExit={home}>{(ctx) => <Lab {...ctx} />}</Stage>;
+  }
+
+  if (screen.name === 'game') {
+    const game = gameInfo(screen.id);
+    if (game?.create && age) {
+      return <Stage onExit={home}>{(ctx) => <GameRunner {...ctx} game={game} age={age} onExit={home} />}</Stage>;
+    }
+  }
 
   return (
-    <main className="intro">
-      <h1>Idol Academy</h1>
-      <p className="sub">Test 2 · bewegingen herkennen &amp; tellen</p>
-      <ol>
-        <li>Zet het toestel rechtop (staand of liggend) en ga 2 à 3 meter achteruit.</li>
-        <li>Volg de tips tot je goed in beeld staat.</li>
-        <li>Kies een beweging en kijk of de teller klopt.</li>
-        <li>Met <strong>● Opnemen</strong> bewaar je een beweging als testbestand (enkel lichaamspunten, geen beeld).</li>
-      </ol>
-      <p className="note">Het camerabeeld blijft op dit toestel. Er wordt niets verstuurd.</p>
-      <button className="big" onClick={() => setRunning(true)}>
-        Start camera
-      </button>
-      <p className="version">versie {__APP_VERSION__}</p>
-    </main>
+    <Home
+      age={age}
+      onAge={(a) => {
+        setAge(a);
+        saveAge(a);
+      }}
+      onPlay={(id) => setScreen({ name: 'game', id })}
+      onLab={() => setScreen({ name: 'lab' })}
+    />
   );
 }

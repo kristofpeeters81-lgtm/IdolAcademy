@@ -91,9 +91,31 @@ detectorbestand.
 - `scripts/e2e.mjs`: headless Chrome met een nep-camera (`.y4m`-filmpje). Dat controleert ook
   de CSP en dat er geen externe verzoeken gebeuren.
 
-## 4. Minigames
-*(Blok 4, 6, 7)* Per game: de spelregels, de detector die gebruikt wordt, de timings, de
-leeftijdsdoelen en de scoreformule. Ook wat in de test goed of slecht werkte.
+## 4. Minigames *(blok 4: Spotlight Sprint ingevuld; rest volgt in blok 6/7)*
+
+**Structuur:** `src/games/` is puur TypeScript. Een game is een `GameSession`:
+- `update(body, playing)`: per beeld; bij `playing = false` loopt de tijd niet;
+- `view()`: tijd, teller, doel, voortgang, energie/zone, wat de coach zegt, en nieuwe
+  gebeurtenissen;
+- `result()`: aantal, doel, %, sterren, seconden per Power-zone, en extra regels.
+
+`GameInfo` in `catalog.ts` beschrijft naam, duur, `needs`, kleur, uitleg en `create(age)`. Het
+verloop (uitleg → plaats → aftellen → spelen → resultaat) staat in `src/app/game/GameRunner.tsx`
+(#44). Bouw dat in B-world na met de eigen visuals.
+
+**Scores (voor alle games):** het leeftijdsdoel via `goalFor(tabel, leeftijd)`, het % van het
+doel, en sterren bij 50/80/100% (`scoring.ts`).
+
+| Game | Detector | Duur | Doel per leeftijd (6→13+) | Bijzonder |
+|---|---|---|---|---|
+| Spotlight Sprint | `knieen` | 20 s | 35, 38, 41, 44, 47, 50, 53, 55 stappen | spotlight vult per stap; mijlpalen 25/50/75/100%; +"PERFECT!" per 10 extra |
+
+**Een nieuwe game toevoegen:**
+1. Maak `src/games/<naam>.ts` met een klasse die `GameSession` implementeert. Gebruik een
+   detector uit de motor, `ZoneTimer`, `goalFor` en `starsFor`.
+2. Voeg `create` toe in `catalog.ts`.
+3. Voeg een eigen HUD-element toe in `GameRunner` (zoals `SpotlightBeam`).
+4. Schrijf tests met `synthSequence` (zie `games.test.ts`).
 
 ## 5. Spelverloop en veiligheid
 *(Blok 8)* De opwarming, de rustpauzeregel, de ruimte-check, uit beeld, en de estafette met
