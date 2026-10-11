@@ -711,3 +711,50 @@ het toestel niet verlaten.
   per toestel. Standaard staat alles aan.
 - **Browserregel:** geluid start pas na een tik. De tik op een gamekaart en op "Ik ben klaar!"
   ontgrendelen het geluid.
+
+## 50. Lightstick Catch, Beat Punch en Laser Stage: regels en doelen
+
+**Voorstel** (alle doelen zijn inschattingen, af te stellen met echte kinderen):
+
+| | Lightstick Catch | Beat Punch | Laser Stage |
+|---|---|---|---|
+| Duur | 40 s | 20 s | 40 s |
+| Lichaam | bovenlichaam | bovenlichaam | hele lichaam |
+| Detector | handen raken (`hit`) | `stoot` (met tijd + richting) | `ontwijk` |
+| Telt | punten (goud = 2) | raak op de tel | ontweken wanden |
+| Doel 6 → 13+ | 16, 18, 20, 22, 24, 26, 28, 30 | 9 … 16 (van 18 doelen) | 8 … 15 |
+
+- **Lightstick Catch:**
+  - één stick tegelijk, vanaf 15 s twee;
+  - de levensduur zakt van 2,6 naar 1,7 s;
+  - elke 5e stick is goud, hangt hoog (5–13% van de beeldhoogte) en leeft 30% langer.
+- **Beat Punch:**
+  - om de 2 tellen (1 s) een doel links of rechts, vanaf 9 jaar soms omhoog;
+  - een ring krimpt in 1 s tot op de tel;
+  - raak binnen ±350 ms, "perfect" binnen ±150 ms, combo per 5 raak;
+  - nooit 3× dezelfde kant na elkaar.
+- **Laser Stage:**
+  - vier soorten wanden: hoog (bukken), laag (springen), opening links of rechts (opzij stappen);
+  - de tijd tussen wanden zakt van 2,6 naar 1,8 s, de aanloop van 2,2 naar 1,6 s;
+  - de houding telt van 350 ms vóór tot 200 ms na de aankomst;
+  - Lumi roept de instructie meteen ("Bukken!"), want die is dringend.
+
+## 51. Ontwerpkeuzes blok 6
+
+**Voorstel:**
+1. **Links/rechts zoals op het scherm.** Doelen en openingen staan in schermcoördinaten. Bij
+   een gespiegeld beeld (frontcamera) is links op het scherm de linkerkant van de speler; bij
+   de achtercamera is dat omgekeerd. De game krijgt daarom bij de start `mirrored` en de
+   beeldverhouding mee (`GameContext`). Getest in beide richtingen.
+2. **Lightsticks nooit binnen bereik van je hand.** Gevonden door de test "niet bewegen": een
+   stick verscheen soms net waar de hangende hand al was, en telde dan gratis. Nieuwe sticks
+   verschijnen nu ≥ 0,25 van de hand, dus vangen vraagt altijd een beweging.
+3. **Lasers op de hoogte van de speler.** Gezien op een screenshot: de "hoge" laser hing boven
+   het hoofd, zodat bukken onlogisch leek. De hoge laser ligt nu op hoofdhoogte en de lage op
+   enkelhoogte van dit kind. Die hoogtes worden traag bijgewerkt, enkel als het kind rechtop
+   in het midden staat.
+4. **Beat Punch op een vast tempo van 120 bpm.** De game vraagt via `musicBpm` een vast tempo
+   aan de muziek, zodat de doelen op de tel vallen. Bij de andere games volgt het tempo de
+   Power-zone (#47). Na een pauze kan de muziek wat uit de maat lopen; dat is aanvaardbaar.
+5. **Gedeelde spelkern** (`GameCore`): klok, pauze, energie/zones, mijlpalen en doel, voor alle
+   games (Spotlight Sprint is erop omgebouwd, met dezelfde tests groen).

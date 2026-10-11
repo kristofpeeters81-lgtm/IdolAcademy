@@ -38,6 +38,8 @@ class AudioDirector {
   private bar = 0;
   private bpm = tempoTarget(0);
   private level = 0;
+  /** Vast tempo (bv. Beat Punch) of null = tempo volgt de Power-zone. */
+  private fixedBpm: number | null = null;
   private soundOn = true;
   private voiceOn = true;
   private voice: SpeechSynthesisVoice | null = null;
@@ -122,11 +124,12 @@ class AudioDirector {
   }
 
   /** Muziek starten (of doorlopen). Niveau = Power-zone 0..3. */
-  startMusic(level = 0): void {
+  startMusic(level = 0, fixedBpm: number | null = null): void {
     if (!this.ctx || this.playing) return;
     this.playing = true;
     this.level = level;
-    this.bpm = tempoTarget(level);
+    this.fixedBpm = fixedBpm;
+    this.bpm = fixedBpm ?? tempoTarget(level);
     this.step = 0;
     this.bar = 0;
     this.nextStepTime = this.ctx.currentTime + 0.05;
@@ -223,7 +226,7 @@ class AudioDirector {
       if (this.step >= STEPS_PER_BAR) {
         this.step = 0;
         this.bar++;
-        this.bpm = nextTempo(this.bpm, this.level);
+        if (this.fixedBpm === null) this.bpm = nextTempo(this.bpm, this.level);
       }
     }
   }

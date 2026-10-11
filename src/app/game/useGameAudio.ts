@@ -48,7 +48,7 @@ export function useGameAudio(p: {
       audio.say('Daar gaan we!', 'hoog');
     } else if (phase === 'spelen') {
       audio.sfx('go');
-      audio.startMusic(view?.zone ?? 0);
+      audio.startMusic(view?.zone ?? 0, view?.musicBpm ?? null);
     } else if (phase === 'resultaat') {
       audio.stopMusic();
       audio.setPaused(false);
@@ -78,18 +78,19 @@ export function useGameAudio(p: {
   useEffect(() => {
     if (phase !== 'spelen' || !view) return;
     const r = prev.current;
-    if (view.count > r.count) audio.sfx('stap');
+    // Tik per stap enkel bij Spotlight Sprint; de andere games hebben al een raak-geluid.
+    if (view.count > r.count && game.id === 'spotlight') audio.sfx('stap');
     r.count = view.count;
     audio.setLevel(view.zone);
     if (view.coach !== r.coach) {
       r.coach = view.coach;
-      audio.say(view.coach);
+      audio.say(view.coach, view.coachUrgent ? 'hoog' : 'normaal');
     }
     if (!r.hurry && view.remainingMs <= 5000 && view.remainingMs > 0) {
       r.hurry = true;
       audio.sfx('haast');
     }
-  }, [phase, view]);
+  }, [phase, view, game.id]);
 
   // Mijlpalen, doel, bonussen.
   useEffect(() => {
@@ -99,10 +100,14 @@ export function useGameAudio(p: {
       seen.add(e.id);
       if (e.kind === 'goal') {
         audio.sfx('doel');
-        audio.say('Spotlight aan! Super gedaan!', 'hoog');
+        audio.say(`${e.text} Super gedaan!`, 'hoog');
       } else if (e.kind === 'milestone') {
         audio.sfx('mijlpaal');
         audio.say(e.text);
+      } else if (e.kind === 'hit') {
+        audio.sfx('raak');
+      } else if (e.kind === 'miss') {
+        audio.sfx('mis');
       } else {
         audio.sfx('perfect');
       }

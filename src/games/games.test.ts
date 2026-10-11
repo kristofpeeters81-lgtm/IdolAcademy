@@ -86,8 +86,8 @@ describe('SpotlightSprintSession', () => {
 });
 
 describe('catalogus', () => {
-  it('heeft de acht games uit #12/#27, waarvan Spotlight Sprint speelbaar', () => {
+  it('heeft de acht games uit #12/#27, waarvan er vier speelbaar zijn (blok 4 + 6)', () => {
     expect(GAMES.map((g) => g.name)).toEqual(['Spotlight Sprint', 'Lightstick Catch', 'Laser Stage', 'Beat Punch', 'Jump Squad', 'Freeze Pose', 'Sky Climb', 'Floor Crawl']);
-    expect(GAMES.filter((g) => g.create).map((g) => g.id)).toEqual(['spotlight']);
+    expect(GAMES.filter((g) => g.create).map((g) => g.id)).toEqual(['spotlight', 'lightstick', 'laser', 'punch']);
   });
 });

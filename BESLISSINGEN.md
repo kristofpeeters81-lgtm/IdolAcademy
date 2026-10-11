@@ -60,3 +60,5 @@ nieuw nummer; de oude krijgt status `vervangen door #x` en blijft staan.
 | 47 | 2026-10-11 | Beat: zelf gesynthetiseerd (Am–F–C–G), lagen en tempo (108→132 bpm) groeien mee met de Power-zone | voorlopig |
 | 48 | 2026-10-11 | Lumi spreekt enkel met een lokale Nederlandse stem van het toestel; anders zwijgt ze (privacy) | voorlopig |
 | 49 | 2026-10-11 | Wat Lumi wanneer zegt (gedoseerd), effecten per gebeurtenis, muziek zachter bij spraak/pauze; geluid en stem aan/uit per toestel | voorlopig |
+| 50 | 2026-10-11 | Spelregels en leeftijdsdoelen van Lightstick Catch, Beat Punch en Laser Stage | voorlopig |
+| 51 | 2026-10-11 | Ontwerpkeuzes blok 6: links/rechts zoals op het scherm, sticks nooit bij je hand, lasers op jouw hoogte, Beat Punch op vast 120 bpm | voorlopig |

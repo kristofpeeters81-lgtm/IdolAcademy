@@ -114,7 +114,7 @@ export function pluck(ctx: BaseAudioContext, out: AudioNode, t: number, midi: nu
 }
 
 /** Geluidseffecten van het spel. */
-export type Sfx = 'klik' | 'stap' | 'tel' | 'go' | 'mijlpaal' | 'doel' | 'perfect' | 'haast' | 'pauze' | 'ster';
+export type Sfx = 'klik' | 'stap' | 'tel' | 'go' | 'mijlpaal' | 'doel' | 'perfect' | 'haast' | 'pauze' | 'ster' | 'raak' | 'mis';
 
 export function playSfx(ctx: BaseAudioContext, out: AudioNode, name: Sfx, t: number): void {
   switch (name) {
@@ -145,6 +145,12 @@ export function playSfx(ctx: BaseAudioContext, out: AudioNode, name: Sfx, t: num
       break;
     case 'pauze':
       [79, 72].forEach((m, i) => pluck(ctx, out, t + i * 0.1, m, 0.7, 'triangle'));
+      break;
+    case 'raak':
+      [84, 91].forEach((m, i) => pluck(ctx, out, t + i * 0.03, m, 0.8, 'square'));
+      break;
+    case 'mis':
+      [52, 47].forEach((m, i) => pluck(ctx, out, t + i * 0.08, m, 0.7, 'sawtooth'));
       break;
     case 'ster':
       [88, 95].forEach((m, i) => pluck(ctx, out, t + i * 0.05, m, 1, 'triangle'));

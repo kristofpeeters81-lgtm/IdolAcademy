@@ -91,7 +91,7 @@ detectorbestand.
 - `scripts/e2e.mjs`: headless Chrome met een nep-camera (`.y4m`-filmpje). Dat controleert ook
   de CSP en dat er geen externe verzoeken gebeuren.
 
-## 4. Minigames *(blok 4: Spotlight Sprint ingevuld; rest volgt in blok 6/7)*
+## 4. Minigames *(blok 4 + 6: vier games ingevuld; de rest volgt in blok 7)*
 
 **Structuur:** `src/games/` is puur TypeScript. Een game is een `GameSession`:
 - `update(body, playing)`: per beeld; bij `playing = false` loopt de tijd niet;
@@ -109,6 +109,14 @@ doel, en sterren bij 50/80/100% (`scoring.ts`).
 | Game | Detector | Duur | Doel per leeftijd (6→13+) | Bijzonder |
 |---|---|---|---|---|
 | Spotlight Sprint | `knieen` | 20 s | 35, 38, 41, 44, 47, 50, 53, 55 stappen | spotlight vult per stap; mijlpalen 25/50/75/100%; +"PERFECT!" per 10 extra |
+| Lightstick Catch | handen raken (`hit`) | 40 s | 16 … 30 punten | goud = 2 punten, hoog; sticks nooit bij de hand; vanaf 15 s twee tegelijk |
+| Beat Punch | `stoot` + `takePunches()` | 20 s | 9 … 16 raak (van 18) | vast 120 bpm; raak ±350 ms, perfect ±150 ms; omhoog vanaf 9 j |
+| Laser Stage | `ontwijk` | 40 s | 8 … 15 ontweken | hoog = bukken (op hoofdhoogte), laag = springen (enkelhoogte), opening links/rechts |
+
+**Gedeelde spelkern:** `GameCore` (klok met pauze, energie/zones, mijlpalen, doel). **Context:**
+`GameContext` (`mirrored`, `aspect`, `random`), want doelen staan in schermcoördinaten (#51).
+**Scènes:** `GameScene` beschrijft wat er over het beeld komt; `src/app/game/Scenes.tsx` tekent
+het.
 
 **Een nieuwe game toevoegen:**
 1. Maak `src/games/<naam>.ts` met een klasse die `GameSession` implementeert. Gebruik een

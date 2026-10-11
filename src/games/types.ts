@@ -10,11 +10,44 @@ import type { BodyNeeds } from '../motor/detectors';
 export type GameId = 'spotlight' | 'lightstick' | 'laser' | 'punch' | 'jumpsquad' | 'freeze' | 'climb' | 'crawl';
 export type GameCategory = 'cardio' | 'kracht' | 'test';
 
-/** Iets om kort groot te tonen ("PERFECT!", "SPOTLIGHT ON!"). */
+/** Iets wat gebeurt: kort groot tonen ("PERFECT!") en/of een geluid (raak, mis). */
 export interface GameEvent {
   id: number;
   text: string;
-  kind: 'milestone' | 'goal' | 'bonus';
+  kind: 'milestone' | 'goal' | 'bonus' | 'hit' | 'miss';
+  /** Groot in het midden tonen? (standaard ja; "raak"/"mis" bij elk doel niet) */
+  popup?: boolean;
+}
+
+/** Zoals de speler het scherm ziet: links/rechts op het (eventueel gespiegelde) beeld. */
+export type ScreenSide = 'links' | 'rechts';
+
+/**
+ * Wat een game bovenop het camerabeeld tekent. Coördinaten zijn schermcoördinaten (0..1 van het
+ * camerabeeld zoals getoond). De schil kiest per `type` een tekening.
+ */
+export type GameScene =
+  | { type: 'spotlight' }
+  | { type: 'lightsticks'; targets: { id: number; x: number; y: number; radius: number; gold: boolean; life: number }[] }
+  | {
+      type: 'punch';
+      cues: { id: number; side: ScreenSide | 'omhoog'; x: number; y: number; radius: number; approach: number; state: 'komt' | 'raak' | 'perfect' | 'mis' }[];
+      beat: number;
+    }
+  | {
+      type: 'laser';
+      /** `y` = hoogte van de laser (0..1): bij "hoog" op hoofdhoogte, bij "laag" op enkelhoogte van de speler. */
+      walls: { id: number; kind: 'hoog' | 'laag' | 'links' | 'rechts'; approach: number; state: 'komt' | 'ontweken' | 'geraakt'; y: number }[];
+    };
+
+/** Wat een game bij het aanmaken weet over het scherm. */
+export interface GameContext {
+  /** Wordt het beeld gespiegeld getoond (frontcamera)? */
+  mirrored: boolean;
+  /** Breedte/hoogte van het camerabeeld. */
+  aspect: number;
+  /** Toeval (vast te zetten in tests). */
+  random?: () => number;
 }
 
 export interface GameView {
@@ -33,6 +66,12 @@ export interface GameView {
   /** Nieuwe gebeurtenissen sinds de vorige `view()`. */
   events: GameEvent[];
   finished: boolean;
+  /** Wat er over het camerabeeld getekend wordt. */
+  scene: GameScene;
+  /** Vast muziektempo (bv. Beat Punch speelt op de beat); anders volgt het tempo de Power-zone. */
+  musicBpm?: number;
+  /** Is wat de coach zegt een dringende instructie ("Bukken!")? Dan meteen uitspreken. */
+  coachUrgent?: boolean;
 }
 
 export interface GameResult {
@@ -70,5 +109,5 @@ export interface GameInfo {
   /** Uitleg in 2–3 korte zinnen (Lumi zegt ze voor de start). */
   howTo: string[];
   /** Speelbaar in deze versie? (de rest volgt in blok 6/7) */
-  create?: (age: number) => GameSession;
+  create?: (age: number, ctx: GameContext) => GameSession;
 }

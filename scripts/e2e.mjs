@@ -209,6 +209,30 @@ try {
   check(done, `game: resultaatscherm na 20 s (${summary})`);
   await page.screenshot({ path: path.join(OUT, '9-game-resultaat.png') });
 
+  // --- Blok 6: elke nieuwe game kort starten en kijken of zijn scène verschijnt ---
+  const stopGame = async () => {
+    await page.click('.debug-toggle').catch(() => undefined);
+    await page.evaluate(() => [...document.querySelectorAll('.debug button')].find((b) => b.textContent === 'Stop')?.click());
+    await page.waitForSelector('.home', { timeout: 10000 });
+  };
+  await page.evaluate(() => [...document.querySelectorAll('.result button')].find((b) => b.textContent.includes('Menu'))?.click());
+  await page.waitForSelector('.home', { timeout: 10000 });
+  for (const [name, selector, shot] of [
+    ['Lightstick Catch', '.stick', '10-lightstick.png'],
+    ['Beat Punch', '.pad', '11-beatpunch.png'],
+    ['Laser Stage', '.laser', '12-laser.png'],
+  ]) {
+    await page.evaluate((name) => [...document.querySelectorAll('.card')].find((c) => c.textContent.includes(name))?.click(), name);
+    await page.waitForSelector('.game-intro', { timeout: 60000 });
+    await page.evaluate(() => [...document.querySelectorAll('.game-intro button')].find((b) => b.textContent.includes('klaar'))?.click());
+    await page.waitForSelector('.countdown', { timeout: 30000 }).catch(() => undefined);
+    const seen = await page.waitForSelector(selector, { timeout: 15000 }).then(() => true).catch(() => false);
+    await new Promise((r) => setTimeout(r, 1200));
+    await page.screenshot({ path: path.join(OUT, shot) });
+    check(seen, `${name}: scène verschijnt (${selector})`);
+    await stopGame();
+  }
+
   // Gsm-formaat (staand) ter controle van de opmaak.
   await page.setViewport({ width: 412, height: 892, deviceScaleFactor: 2 }); // zonder isMobile: dat herlaadt de pagina
   await new Promise((r) => setTimeout(r, 1500));

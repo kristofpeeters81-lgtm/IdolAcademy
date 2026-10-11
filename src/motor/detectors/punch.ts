@@ -39,6 +39,15 @@ export class PunchDetector implements Detector {
     { shoulder: LM.rightShoulder, wrist: LM.rightWrist, bentAt: -Infinity, armed: true, count: 0, reach: null },
   ];
   private lastDirection: PunchDirection | null = null;
+  /** Stoten sinds de vorige `takePunches()` (voor games die op timing werken). */
+  private log: { t: number; direction: PunchDirection }[] = [];
+
+  /** Geeft de nieuwe stoten (tijd + richting vanuit de speler) en leegt de lijst. */
+  takePunches(): { t: number; direction: PunchDirection }[] {
+    const out = this.log;
+    this.log = [];
+    return out;
+  }
   private readonly directions: Record<PunchDirection, number> = { links: 0, rechts: 0, omhoog: 0 };
 
   update(b: BodyPose): void {
@@ -65,6 +74,7 @@ export class PunchDetector implements Detector {
         // Richting vanuit de spéler: x groter = zijn linkerkant.
         const dir: PunchDirection = -dy > Math.abs(dx) ? 'omhoog' : dx > 0 ? 'links' : 'rechts';
         this.lastDirection = dir;
+        this.log.push({ t: b.t, direction: dir });
         this.directions[dir]++;
       }
     }
@@ -91,6 +101,7 @@ export class PunchDetector implements Detector {
       arm.reach = null;
     }
     this.lastDirection = null;
+    this.log = [];
     this.directions.links = this.directions.rechts = this.directions.omhoog = 0;
   }
 }

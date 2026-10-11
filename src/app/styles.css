@@ -1060,3 +1060,184 @@ button.icon {
 .sound-settings .hint-text {
   flex-basis: 100%;
 }
+
+/* ===================== Scènes van de games (blok 6) ===================== */
+.scene {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* Lightstick Catch */
+.stick {
+  position: fixed;
+  filter: drop-shadow(0 0 12px var(--accent-2));
+  animation: stick-in 0.25s ease-out;
+}
+.stick svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.stick-life {
+  fill: rgba(11, 7, 32, 0.35);
+  stroke: var(--accent-2);
+  stroke-width: 2.5;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+}
+.stick-body {
+  stroke: #fff;
+  stroke-width: 5;
+  stroke-linecap: round;
+}
+.stick-tip {
+  fill: var(--accent-2);
+  animation: tip-glow 0.5s ease-in-out infinite alternate;
+}
+.stick.gold {
+  filter: drop-shadow(0 0 16px #ffd23f);
+}
+.stick.gold .stick-life {
+  stroke: #ffd23f;
+}
+.stick.gold .stick-tip {
+  fill: #ffd23f;
+}
+@keyframes stick-in {
+  from {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+}
+@keyframes tip-glow {
+  to {
+    opacity: 0.6;
+  }
+}
+
+/* Beat Punch */
+.pad {
+  position: fixed;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 0.6vmin solid var(--amber);
+  background: radial-gradient(circle, rgba(255, 176, 32, 0.45), rgba(255, 176, 32, 0.08) 70%);
+  box-shadow: 0 0 calc(1vmin + var(--beat, 0) * 2vmin) var(--amber);
+  font-family: var(--font-head);
+  font-weight: 900;
+  font-size: 4vmin;
+  color: #fff;
+  text-shadow: 0 2px 8px #000;
+}
+.pad-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 0.5vmin solid #fff;
+  opacity: 0.85;
+}
+.pad.perfect {
+  border-color: var(--lime);
+  background: radial-gradient(circle, rgba(198, 255, 61, 0.7), transparent 75%);
+  box-shadow: 0 0 4vmin var(--lime);
+  animation: pad-hit 0.4s ease-out forwards;
+  font-size: 3vmin;
+}
+.pad.raak {
+  border-color: var(--accent-2);
+  background: radial-gradient(circle, rgba(34, 230, 255, 0.6), transparent 75%);
+  animation: pad-hit 0.4s ease-out forwards;
+  font-size: 3vmin;
+}
+.pad.mis {
+  border-color: var(--z4);
+  background: radial-gradient(circle, rgba(255, 61, 110, 0.35), transparent 75%);
+  opacity: 0.7;
+  font-size: 3vmin;
+}
+@keyframes pad-hit {
+  to {
+    transform: scale(1.35);
+    opacity: 0;
+  }
+}
+
+/* Laser Stage */
+.laser {
+  position: fixed;
+  opacity: calc(0.25 + var(--a) * 0.75);
+}
+.laser-beam {
+  position: absolute;
+  background: repeating-linear-gradient(90deg, rgba(255, 61, 110, 0.95) 0 2%, rgba(255, 61, 174, 0.6) 2% 4%);
+  box-shadow: 0 0 calc(1vmin + var(--a) * 4vmin) #ff3d6e;
+  border-radius: 1vmin;
+}
+/* Hoog = op hoofdhoogte van de speler (bukken), laag = op enkelhoogte (springen). */
+.laser.hoog .laser-beam,
+.laser.laag .laser-beam {
+  left: 0;
+  right: 0;
+  top: calc(var(--y) * 100%);
+  height: calc(2% + var(--a) * 6%);
+  transform: translateY(-50%);
+}
+/* Opening links op het scherm = de wand staat rechts (en omgekeerd). */
+.laser.links .laser-beam,
+.laser.rechts .laser-beam {
+  top: 0;
+  bottom: 0;
+  width: 55%;
+  background: repeating-linear-gradient(0deg, rgba(255, 61, 110, 0.75) 0 1.5%, rgba(255, 61, 110, 0.15) 1.5% 5%);
+}
+.laser.links .laser-beam {
+  right: 0;
+}
+.laser.rechts .laser-beam {
+  left: 0;
+}
+.laser-label {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 42%;
+  text-align: center;
+  font-family: var(--font-head);
+  font-weight: 900;
+  font-size: calc(5vmin + var(--a) * 4vmin);
+  color: #fff;
+  text-shadow: 0 0 2vmin #ff3d6e, 0 2px 8px #000;
+}
+.laser.links .laser-label {
+  right: 45%;
+}
+.laser.rechts .laser-label {
+  left: 45%;
+}
+.laser.ontweken {
+  opacity: 1;
+  animation: laser-out 0.5s ease-out forwards;
+}
+.laser.ontweken .laser-beam {
+  background: rgba(61, 255, 162, 0.6);
+  box-shadow: 0 0 4vmin var(--good);
+}
+.laser.ontweken .laser-label {
+  color: var(--good);
+  text-shadow: 0 0 2vmin var(--good);
+}
+.laser.geraakt {
+  opacity: 1;
+  animation: laser-out 0.5s ease-out forwards;
+}
+.laser.geraakt .laser-label {
+  color: var(--z4);
+}
+@keyframes laser-out {
+  to {
+    opacity: 0;
+  }
+}

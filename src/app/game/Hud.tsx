@@ -50,11 +50,13 @@ export function Coach({ text }: { text: string }) {
 export function Popups({ events }: { events: GameEvent[] }) {
   return (
     <div className="hud-popups" aria-live="polite">
-      {events.map((e) => (
-        <div key={e.id} className={`hud-popup ${e.kind}`}>
-          {e.text}
-        </div>
-      ))}
+      {events
+        .filter((e) => e.popup !== false)
+        .map((e) => (
+          <div key={e.id} className={`hud-popup ${e.kind}`}>
+            {e.text}
+          </div>
+        ))}
     </div>
   );
 }

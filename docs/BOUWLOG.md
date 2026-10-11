@@ -462,3 +462,50 @@ gemaakt.
 
 **Les voor B-world:** `src/audio/music.ts` en `speech.ts` zijn puur en direct herbruikbaar. Hou de
 regel "enkel lokale stemmen" aan, zeker zodra er namen uitgesproken worden.
+
+---
+
+## Blok 6 — Lightstick Catch, Beat Punch, Laser Stage  (2026-10-11 → wacht op test door Kristof)
+
+**Doel:** de drie cardio-games die nog ontbraken (#12), op het sjabloon van blok 4.
+
+**Gebouwd:**
+- `src/games/core.ts`: **GameCore**, de gedeelde spelkern (#51.5). Spotlight Sprint is erop
+  omgebouwd.
+- `src/games/lightstickCatch.ts`, `beatPunch.ts`, `laserStage.ts`: de spelregels (#50).
+- `GameContext` (spiegeling, verhouding, toeval) bij het aanmaken van een game. `GameScene`:
+  wat er over het beeld getekend wordt, per game een type.
+- `PunchDetector.takePunches()`: stoten met tijd en richting, voor games op timing.
+- App:
+  - `Scenes.tsx`: lightsticks met een "levensring", stootdoelen met een krimpende ring en
+    RAAK/PERFECT/MIS, laserwanden met instructie en ONTWEKEN!/AU!;
+  - `useFrameRect.ts`: positie van het camerabeeld in pixels.
+- Geluid: nieuwe effecten "raak" en "mis"; vast tempo voor Beat Punch; dringende
+  coach-instructies worden meteen uitgesproken (`coachUrgent`); de stap-tik klinkt enkel nog bij
+  Spotlight Sprint.
+
+**Getest:**
+- **108 unit tests** (+9). Per game speelt een nagebootste speler perfect:
+  - een hand op elke lightstick;
+  - een stoot op de tel naar de juiste kant, ook zonder spiegeling;
+  - de juiste houding op het juiste moment.
+  Daarnaast valstrikken (stilstaan, verkeerde kant) en de planning (vier soorten wanden,
+  steeds sneller, nooit 3× dezelfde).
+- Extra test: de lasers liggen op hoofd- en enkelhoogte van de speler.
+- **E2E:** elke game start, en zijn scène verschijnt (`.stick`, `.pad`, `.laser`). Screenshots
+  bekeken: een doel rechts op het scherm geeft "Rechts!" (spiegeling klopt).
+
+**Problemen en oplossingen:**
+1. *Gratis lightsticks* (gevonden door een valstrik-test) → sticks verschijnen niet meer binnen
+   bereik van een hand (#51.2).
+2. *Hoge laser boven het hoofd* (gezien op een screenshot) → lasers liggen op de hoogte van de
+   speler (#51.3).
+3. *Dubbel geluid*: de stap-tik + het raak-geluid klonken samen → de tik enkel nog bij
+   Spotlight Sprint.
+
+**Open punten:** echt spelen door kinderen. Vooral de timing van Beat Punch (±350 ms) en de
+houdingen van Laser Stage (springen herkend vanaf 0,12 romp) moeten in de praktijk blijken.
+
+**Les voor B-world:** een game = `GameCore` + één detector + een scène-beschrijving. Hou
+schermcoördinaten en spiegeling expliciet (`GameContext`); dat is de meest verraderlijke bron
+van "links is rechts"-fouten.
