@@ -309,3 +309,44 @@ bij uit beeld, en dat meetbaar maken met opnames van echte bewegingen (#21, #31)
   in.
 - Neem `test-fixtures/` mee: dat zijn de echte bewegingen waarop de drempels afgesteld zijn.
 - Meet van voren nooit met 2D-hoeken voor bewegingen in de diepte (#37).
+
+---
+
+## Blok 3 — Stijlvoorbeeld  (2026-10-11 → wacht op keuze van Kristof)
+
+**Doel:** de visuele stijl laten kiezen *vóór* er iets in de app ingebouwd wordt (#22).
+
+**Gebouwd:** één los voorbeeldblad, `public/stijl/index.html` (live onder `/stijl/`), dat niet aan
+de app gekoppeld is. Het toont twee stijlrichtingen naast elkaar (A Neon Stage, B Holo Pop, zie
+#42). Op gsm staan ze onder elkaar.
+
+**Hoe het werkt:**
+- *Eén HTML-bestand:* alle CSS inline, met een eigen CSP (`connect-src 'none'`). De
+  lettertypes zitten mee in `public/stijl/fonts/` (Unbounded, Outfit en Poppins, latin, ~130 KB,
+  OFL 1.1 met licentietekst). Er is dus geen verbinding met Google Fonts (#4).
+- *Thema's als CSS-variabelen* (`.theme-a`, `.theme-b`): dezelfde HTML-structuur krijgt een
+  andere look. Daardoor wordt het inbouwen later eenvoudig: één set tokens kiezen.
+- *De coach Lumi* is één SVG-`<symbol>`. Haar, huid, outfit en accenten komen uit
+  CSS-variabelen, die via `<use>` doorerven, zodat dezelfde tekening in beide thema's past.
+- *De HUD-mockup* schaalt met container query units (`cqw`), zodat de verhoudingen gelijk blijven
+  van gsm tot tv.
+- `scripts/screenshot.mjs`: maakt een screenshot van een pagina uit `dist/`. Dat is gebruikt om
+  het blad op desktop (1280 px) en gsm (360/400 px) na te kijken.
+
+**Getest/nagekeken:**
+- Screenshots op desktop en gsm bekeken.
+- Gevonden en opgelost: het woordmerk "ACADEMY" viel op een smalle gsm buiten het kader
+  (kleiner gemaakt), er stond een dubbel SVG-attribuut, en een 404 op het tabblad-icoon.
+- Geen consolefouten en geen externe verzoeken.
+- **Service-worker-bug gevonden en opgelost:** de offline-worker beantwoordde *elke*
+  paginanavigatie met de opgeslagen app. Op een toestel waar de app al eens open was, toonde
+  `/stijl/` dus de app. Nu gaan andere pagina's eerst naar het netwerk, en enkel offline volgt de
+  terugval op de app. Er is een e2e-controle bijgekomen: app openen, service worker actief,
+  `/stijl/` toont het stijlvoorbeeld.
+
+**Volgende stap:** Kristof kiest (#42). Daarna wordt de stijl als tokens + componenten in de app
+gebouwd, samen met de eerste echte game (blok 4).
+
+**Les voor B-world:** B-world heeft een eigen stijl (agenten), dus dit blad is vooral een
+voorbeeld van de *aanpak*. Thema-tokens als CSS-variabelen, en één SVG-personage waarvan de
+kleuren via variabelen wisselen, zijn in B-world even bruikbaar.

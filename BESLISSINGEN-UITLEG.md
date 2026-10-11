@@ -559,3 +559,31 @@ drempel wordt meteen getoetst aan echte bewegingen van echte kinderen.
 
 **Beslissing:** Er komt een extra detector voor jumping jacks: openheid = 60% armen + 40% benen.
 Hij staat niet in de lijst van acht games (#12), maar hoort bij de korte opwarming (#18).
+
+## 42. Visuele stijl (open)
+
+**Status:** open. Wacht op Kristofs keuze. Het voorbeeldblad staat live op
+`https://kristofpeeters81-lgtm.github.io/IdolAcademy/stijl/` (bron: `public/stijl/index.html`).
+
+**Opties:**
+- **A · Neon Stage:** donker podium (#0B0720) met neon roze, cyaan, violet en lime. Letters:
+  Unbounded (titels, cijfers) + Outfit (tekst). Gloed rond knoppen en cijfers, zoals een
+  concertzaal.
+- **B · Holo Pop:** licht holografisch pastelverloop, inkt-violet tekst, hot pink, periwinkle,
+  mint en zon. Letters: Poppins. Kaarten met een holografische rand en "sticker"-cijfers met
+  offset-schaduw.
+- **Mix:** per onderdeel (kleuren, letters, kaarten, HUD).
+
+Beide tonen hetzelfde:
+- de coach **Lumi**: eigen SVG-ontwerp in K-pop-stijl, met kleuren via CSS-variabelen, zodat één
+  tekening in beide stijlen werkt;
+- kleuren, letters, knoppen, en de gamekaarten met een eigen pictogram per game;
+- de HUD tijdens een training: timer-ring, teller, Power-meter met de 4 zones uit #26,
+  "PERFECT!"-popup en coach-ballon;
+- een estafette-scorebord met "% van het leeftijdsdoel" (#30).
+
+**Vragen aan Kristof:** A, B of mix? Lumi goed, of anders (meerdere coaches, ander uiterlijk)? Is
+de HUD te druk van op 2–3 m? Gamenamen Engels of Nederlands (#27/#28)?
+
+**Na de keuze:** de gekozen stijl wordt een nieuwe beslissing, en pas dan wordt ze in de app
+ingebouwd (blok 4), zoals afgesproken in #22.

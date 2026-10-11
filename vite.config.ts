@@ -74,7 +74,8 @@ self.addEventListener('fetch', (e) => {
   e.respondWith(
     caches.match(e.request, { ignoreSearch: true }).then((hit) => {
       if (hit) return hit;
-      if (e.request.mode === 'navigate') return caches.match('./');
+      // Andere pagina's (bv. /stijl/): eerst het netwerk; enkel offline terugvallen op de app.
+      if (e.request.mode === 'navigate') return fetch(e.request).catch(() => caches.match('./'));
       return fetch(e.request).then((res) => {
         if (res.ok && /\\/mediapipe\\//.test(e.request.url)) {
           const copy = res.clone();

@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'" />
+    <link rel="icon" type="image/svg+xml" href="../icon.svg" />
+    <title>Idol Academy · Stijlvoorbeeld</title>
+    <style>
+      /* Lettertypes: zelf meegeleverd (geen Google Fonts-verbinding, #4). Licentie: fonts/LICENSE.txt (OFL 1.1). */
+      @font-face { font-family: 'Unbounded'; font-weight: 500; font-display: swap; src: url(fonts/unbounded-latin-500-normal.woff2) format('woff2'); }
+      @font-face { font-family: 'Unbounded'; font-weight: 700; font-display: swap; src: url(fonts/unbounded-latin-700-normal.woff2) format('woff2'); }
+      @font-face { font-family: 'Unbounded'; font-weight: 900; font-display: swap; src: url(fonts/unbounded-latin-900-normal.woff2) format('woff2'); }
+      @font-face { font-family: 'Outfit'; font-weight: 400; font-display: swap; src: url(fonts/outfit-latin-400-normal.woff2) format('woff2'); }
+      @font-face { font-family: 'Outfit'; font-weight: 600; font-display: swap; src: url(fonts/outfit-latin-600-normal.woff2) format('woff2'); }
+      @font-face { font-family: 'Outfit'; font-weight: 800; font-display: swap; src: url(fonts/outfit-latin-800-normal.woff2) format('woff2'); }
+      @font-face { font-family: 'Poppins'; font-weight: 400; font-display: swap; src: url(fonts/poppins-latin-400-normal.woff2) format('woff2'); }
+      @font-face { font-family: 'Poppins'; font-weight: 600; font-display: swap; src: url(fonts/poppins-latin-600-normal.woff2) format('woff2'); }
+      @font-face { font-family: 'Poppins'; font-weight: 800; font-display: swap; src: url(fonts/poppins-latin-800-normal.woff2) format('woff2'); }
+
+      * { box-sizing: border-box; }
+      html, body { margin: 0; background: #14121c; color: #eee; font-family: 'Outfit', system-ui, sans-serif; }
+      .page { max-width: 1200px; margin: 0 auto; padding: 24px 16px 64px; }
+      .page > header h1 { font-family: 'Unbounded', sans-serif; font-weight: 700; font-size: clamp(1.4rem, 4vw, 2.2rem); margin: 0 0 8px; }
+      .page > header p { color: #b9b4c9; max-width: 60ch; line-height: 1.5; margin: 0 0 6px; }
+      .page > header .notice { display: inline-block; margin-top: 8px; padding: 6px 12px; border-radius: 999px; background: #2a2540; color: #ffd23f; font-weight: 600; font-size: 0.9rem; }
+      .compare { display: grid; gap: 28px; margin-top: 28px; }
+      @media (min-width: 1100px) { .compare { grid-template-columns: 1fr 1fr; } }
+
+      /* ================= Thema-tokens ================= */
+      .theme {
+        border-radius: 28px; padding: 22px 18px 26px; overflow: hidden; position: relative;
+        background: var(--bg); color: var(--text); font-family: var(--font-body);
+        container-type: inline-size;
+      }
+      .theme-a {
+        --font-head: 'Unbounded', sans-serif; --font-body: 'Outfit', sans-serif;
+        --bg: radial-gradient(120% 60% at 15% 0%, rgba(255, 61, 174, 0.28), transparent 60%),
+              radial-gradient(90% 50% at 90% 10%, rgba(34, 230, 255, 0.22), transparent 60%),
+              radial-gradient(100% 60% at 50% 100%, rgba(139, 92, 246, 0.35), transparent 70%), #0b0720;
+        --surface: rgba(28, 18, 62, 0.78); --surface-line: rgba(255, 255, 255, 0.12);
+        --text: #f6f3ff; --muted: #a79bd6;
+        --primary: #ff3dae; --secondary: #22e6ff; --tertiary: #8b5cf6; --pop: #c6ff3d;
+        --z1: #22e6ff; --z2: #c6ff3d; --z3: #ffb020; --z4: #ff3d6e;
+        --radius: 16px; --glow: 0 0 18px; --on-primary: #fff;
+        --coach-hair: url(#hairA); --coach-skin: #ffd9c4; --coach-skin-shade: #f2b9a0; --coach-outfit: #241650; --coach-outfit-2: #ff3dae; --coach-accent: #22e6ff; --coach-eye: #2a1b5c;
+      }
+      .theme-b {
+        --font-head: 'Poppins', sans-serif; --font-body: 'Poppins', sans-serif;
+        --bg: linear-gradient(135deg, #fde7ff 0%, #e6f0ff 35%, #e3fff6 65%, #fff1e3 100%);
+        --surface: rgba(255, 255, 255, 0.72); --surface-line: rgba(30, 22, 64, 0.1);
+        --text: #1e1640; --muted: #6b6290;
+        --primary: #ff2e93; --secondary: #6c5cff; --tertiary: #00c2a8; --pop: #ffd23f;
+        --z1: #00c2a8; --z2: #ffd23f; --z3: #ff8a3d; --z4: #ff2e93;
+        --radius: 22px; --glow: 0 6px 18px; --on-primary: #fff;
+        --coach-hair: url(#hairB); --coach-skin: #ffe0cf; --coach-skin-shade: #f5c3aa; --coach-outfit: #ffffff; --coach-outfit-2: #6c5cff; --coach-accent: #ff2e93; --coach-eye: #3b2a7a;
+      }
+
+      .theme h2 { font-family: var(--font-head); font-weight: 900; margin: 0; font-size: clamp(1.2rem, 5cqw, 1.8rem); letter-spacing: 0.01em; }
+      .theme h3 { font-family: var(--font-head); font-weight: 700; font-size: 0.95rem; margin: 26px 0 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+      .theme .label { display: inline-block; font-weight: 800; font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 4px 10px; border-radius: 999px; background: var(--primary); color: var(--on-primary); }
+
+      /* ===== Titel + coach ===== */
+      .hero { display: grid; grid-template-columns: minmax(120px, 34%) 1fr; gap: 14px; align-items: center; margin-top: 12px; }
+      .hero svg.coach { width: 100%; height: auto; filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.25)); }
+      .wordmark { font-family: var(--font-head); font-weight: 900; line-height: 0.95; font-size: clamp(1.4rem, 8cqw, 3.4rem); margin: 6px 0; }
+      .theme-a .wordmark { background: linear-gradient(90deg, var(--primary), var(--tertiary) 55%, var(--secondary)); -webkit-background-clip: text; background-clip: text; color: transparent; filter: drop-shadow(0 0 14px rgba(255, 61, 174, 0.45)); }
+      .theme-b .wordmark { color: var(--text); text-shadow: 3px 3px 0 var(--pop), 6px 6px 0 var(--primary); }
+      .bubble { position: relative; display: inline-block; background: var(--surface); border: 1px solid var(--surface-line); padding: 10px 14px; border-radius: 18px 18px 18px 4px; font-weight: 600; margin-top: 8px; backdrop-filter: blur(6px); }
+      .bubble b { color: var(--primary); }
+
+      /* ===== Kleuren ===== */
+      .swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 8px; }
+      .swatch { border-radius: 12px; overflow: hidden; background: var(--surface); border: 1px solid var(--surface-line); font-size: 0.75rem; }
+      .swatch i { display: block; height: 46px; }
+      .swatch span { display: block; padding: 6px 8px; }
+      .swatch small { color: var(--muted); }
+
+      /* ===== Typografie ===== */
+      .type .t1 { font-family: var(--font-head); font-weight: 900; font-size: clamp(1.6rem, 7cqw, 2.4rem); margin: 0; }
+      .type .t2 { font-family: var(--font-head); font-weight: 700; font-size: 1.15rem; margin: 4px 0; }
+      .type p { margin: 4px 0; line-height: 1.45; }
+      .type .num { font-family: var(--font-head); font-weight: 900; font-size: 3rem; line-height: 1; color: var(--secondary); font-variant-numeric: tabular-nums; }
+
+      /* ===== Knoppen ===== */
+      .buttons { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+      .btn { font: inherit; font-family: var(--font-head); font-weight: 700; border: 0; cursor: pointer; padding: 0.85em 1.5em; border-radius: 999px; font-size: 0.95rem; }
+      .btn.primary { background: var(--primary); color: var(--on-primary); box-shadow: var(--glow) color-mix(in srgb, var(--primary) 60%, transparent); }
+      .theme-a .btn.primary { background: linear-gradient(90deg, var(--primary), var(--tertiary)); }
+      .theme-b .btn.primary { box-shadow: 0 5px 0 #c4136b, 0 10px 20px rgba(255, 46, 147, 0.35); }
+      .btn.secondary { background: transparent; color: var(--text); border: 2px solid var(--secondary); }
+      .chip { font-size: 0.8rem; font-weight: 600; padding: 5px 12px; border-radius: 999px; background: color-mix(in srgb, var(--tertiary) 20%, transparent); color: var(--text); border: 1px solid color-mix(in srgb, var(--tertiary) 55%, transparent); }
+
+      /* ===== Gamekaarten ===== */
+      .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(135px, 1fr)); gap: 10px; }
+      .card { position: relative; border-radius: var(--radius); padding: 12px; background: var(--surface); border: 1px solid var(--surface-line); min-height: 128px; display: flex; flex-direction: column; gap: 6px; backdrop-filter: blur(6px); }
+      .theme-a .card { box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04), 0 0 24px rgba(139, 92, 246, 0.18); }
+      .theme-b .card::before { content: ''; position: absolute; inset: 0; border-radius: inherit; padding: 2px; background: conic-gradient(from 210deg, #ff9de0, #9fd8ff, #b8ffe8, #fff3a0, #ff9de0); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; }
+      .card .icon { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: color-mix(in srgb, var(--c) 22%, transparent); color: var(--c); }
+      .theme-a .card .icon { box-shadow: 0 0 14px color-mix(in srgb, var(--c) 55%, transparent); }
+      .card .icon svg { width: 24px; height: 24px; }
+      .card strong { font-family: var(--font-head); font-weight: 700; font-size: 0.9rem; line-height: 1.15; }
+      .card small { color: var(--muted); font-size: 0.75rem; }
+      .card .tag { position: absolute; top: 10px; right: 10px; font-size: 0.6rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--c); }
+      .card .stars { margin-top: auto; color: var(--pop); letter-spacing: 2px; font-size: 0.85rem; }
+      .theme-b .card .stars { color: #f0b400; }
+
+      /* ===== HUD-mockup ===== */
+      .hud { position: relative; aspect-ratio: 16 / 9; border-radius: var(--radius); overflow: hidden; container-type: inline-size; }
+      .theme-a .hud { background: radial-gradient(60% 80% at 50% 40%, #3a2f63, #120c2a 75%); }
+      .theme-b .hud { background: radial-gradient(60% 80% at 50% 40%, #fbf7ff, #d9d2f5 80%); }
+      .hud .cam-note { position: absolute; left: 50%; bottom: 3cqw; transform: translateX(-50%); font-size: 1.6cqw; opacity: 0.5; white-space: nowrap; }
+      .hud svg.person { position: absolute; left: 50%; top: 4%; height: 92%; transform: translateX(-50%); }
+      .hud .timer { position: absolute; top: 3cqw; left: 3cqw; width: 12cqw; height: 12cqw; }
+      .hud .timer svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+      .hud .timer span { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--font-head); font-weight: 900; font-size: 4cqw; }
+      .hud .title { position: absolute; top: 3.4cqw; left: 17cqw; font-family: var(--font-head); font-weight: 900; font-size: 2.8cqw; }
+      .hud .title small { display: block; font-family: var(--font-body); font-weight: 600; font-size: 1.6cqw; color: var(--muted); }
+      .hud .count { position: absolute; top: 2cqw; right: 3cqw; text-align: right; }
+      .hud .count b { display: block; font-family: var(--font-head); font-weight: 900; font-size: 11cqw; line-height: 0.9; color: var(--secondary); font-variant-numeric: tabular-nums; }
+      .theme-a .hud .count b { text-shadow: 0 0 2cqw rgba(34, 230, 255, 0.7); }
+      .theme-b .hud .count b { color: var(--primary); text-shadow: 0.5cqw 0.5cqw 0 var(--pop); }
+      .hud .count span { font-weight: 600; font-size: 1.8cqw; color: var(--muted); }
+      .hud .power { position: absolute; right: 3cqw; bottom: 4cqw; top: 22cqw; width: 4.5cqw; display: flex; flex-direction: column-reverse; gap: 0.6cqw; }
+      .hud .power i { flex: 1; border-radius: 1cqw; background: color-mix(in srgb, var(--zc) 25%, transparent); border: 0.25cqw solid color-mix(in srgb, var(--zc) 60%, transparent); }
+      .hud .power i.on { background: var(--zc); box-shadow: 0 0 1.6cqw var(--zc); }
+      .hud .power-label { position: absolute; right: 8.6cqw; bottom: 4cqw; text-align: right; font-family: var(--font-head); font-weight: 900; font-size: 2.2cqw; color: var(--z3); }
+      .hud .power-label small { display: block; font-family: var(--font-body); font-size: 1.4cqw; color: var(--muted); font-weight: 600; }
+      .hud .popup { position: absolute; left: 50%; top: 40%; transform: translate(-50%, -50%) rotate(-6deg); font-family: var(--font-head); font-weight: 900; font-size: 6cqw; color: var(--pop); }
+      .theme-a .hud .popup { text-shadow: 0 0 2cqw var(--pop); }
+      .theme-b .hud .popup { color: #fff; -webkit-text-stroke: 0.35cqw var(--primary); text-shadow: 0.6cqw 0.6cqw 0 var(--secondary); }
+      .hud .coachbox { position: absolute; left: 3cqw; bottom: 3cqw; display: flex; align-items: flex-end; gap: 1cqw; }
+      .hud .coachbox svg { width: 11cqw; height: auto; }
+      .hud .coachbox .bubble { font-size: 2cqw; margin: 0 0 3cqw; padding: 1cqw 1.6cqw; }
+
+      /* ===== Scorebord ===== */
+      .board { border-radius: var(--radius); background: var(--surface); border: 1px solid var(--surface-line); overflow: hidden; }
+      .board .row { display: grid; grid-template-columns: 2.2em 1fr auto auto; gap: 10px; align-items: center; padding: 10px 14px; border-top: 1px solid var(--surface-line); }
+      .board .row:first-child { border-top: 0; }
+      .board .rank { font-family: var(--font-head); font-weight: 900; font-size: 1.2rem; color: var(--muted); }
+      .board .row.first .rank { color: var(--pop); }
+      .theme-b .board .row.first .rank { color: #f0b400; }
+      .board .name b { font-weight: 800; }
+      .board .name small { color: var(--muted); margin-left: 6px; }
+      .board .bar { width: clamp(60px, 22cqw, 160px); height: 10px; border-radius: 99px; background: color-mix(in srgb, var(--text) 10%, transparent); overflow: hidden; }
+      .board .bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--secondary), var(--primary)); }
+      .board .pct { font-family: var(--font-head); font-weight: 900; min-width: 3.4em; text-align: right; }
+
+      .footer { margin-top: 36px; background: #1d1a29; border-radius: 20px; padding: 18px; line-height: 1.55; }
+      .footer h2 { font-family: 'Unbounded', sans-serif; font-size: 1.1rem; margin: 0 0 8px; }
+      .footer ol { margin: 0; padding-left: 1.2em; }
+      .footer small { color: #9c97ad; }
+    </style>
+  </head>
+  <body>
+    <!-- ===== Gedeelde tekeningen (eigen ontwerp, #14) ===== -->
+    <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+      <defs>
+        <linearGradient id="hairA" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#ff7ad1" />
+          <stop offset="0.55" stop-color="#9b6bff" />
+          <stop offset="1" stop-color="#3fd6ff" />
+        </linearGradient>
+        <linearGradient id="hairB" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#c9b6ff" />
+          <stop offset="0.5" stop-color="#ffb3dc" />
+          <stop offset="1" stop-color="#9ff0e2" />
+        </linearGradient>
+        <!-- De idol-coach "Lumi": eigen ontwerp in K-pop-stijl, geen bestaand personage. -->
+        <symbol id="coach" viewBox="0 0 200 240">
+          <path d="M42 112 C30 52 70 18 100 18 C132 18 172 50 158 112 L166 176 C150 168 140 156 134 142 L66 142 C60 156 50 168 34 176 Z" style="fill: var(--coach-hair)" />
+          <rect x="88" y="128" width="24" height="30" rx="8" style="fill: var(--coach-skin-shade)" />
+          <path d="M26 240 C32 188 64 164 100 164 C136 164 168 188 174 240 Z" style="fill: var(--coach-outfit)" />
+          <path d="M26 240 C30 214 42 196 58 184 L72 240 Z M174 240 C170 214 158 196 142 184 L128 240 Z" style="fill: var(--coach-outfit-2)" />
+          <path d="M84 165 L100 192 L116 165 Z" fill="#fff" opacity="0.9" />
+          <text x="100" y="222" text-anchor="middle" font-family="Unbounded, sans-serif" font-weight="900" font-size="16" style="fill: var(--coach-accent)">IA</text>
+          <ellipse cx="56" cy="100" rx="7" ry="10" style="fill: var(--coach-skin-shade)" />
+          <ellipse cx="144" cy="100" rx="7" ry="10" style="fill: var(--coach-skin-shade)" />
+          <ellipse cx="100" cy="96" rx="44" ry="50" style="fill: var(--coach-skin)" />
+          <path d="M54 92 C52 46 80 34 100 36 C126 34 150 48 147 94 C140 74 128 64 114 61 C110 74 98 80 82 82 C78 72 70 68 62 72 C58 78 56 84 54 92 Z" style="fill: var(--coach-hair)" />
+          <path d="M70 90 Q80 84 90 89" stroke="#5a3d7a" stroke-width="2.5" fill="none" stroke-linecap="round" />
+          <path d="M110 89 Q120 84 130 90" stroke="#5a3d7a" stroke-width="2.5" fill="none" stroke-linecap="round" />
+          <ellipse cx="81" cy="104" rx="8.5" ry="11" style="fill: var(--coach-eye)" />
+          <ellipse cx="119" cy="104" rx="8.5" ry="11" style="fill: var(--coach-eye)" />
+          <ellipse cx="81" cy="108" rx="5.5" ry="6" style="fill: var(--coach-accent)" opacity="0.8" />
+          <ellipse cx="119" cy="108" rx="5.5" ry="6" style="fill: var(--coach-accent)" opacity="0.8" />
+          <circle cx="84" cy="99" r="3.2" fill="#fff" />
+          <circle cx="122" cy="99" r="3.2" fill="#fff" />
+          <circle cx="78.5" cy="110" r="1.6" fill="#fff" />
+          <circle cx="116.5" cy="110" r="1.6" fill="#fff" />
+          <ellipse cx="70" cy="120" rx="8" ry="4.5" fill="#ff7aa8" opacity="0.45" />
+          <ellipse cx="130" cy="120" rx="8" ry="4.5" fill="#ff7aa8" opacity="0.45" />
+          <path d="M90 124 Q100 134 110 124 Q100 128 90 124 Z" fill="#d94a7a" />
+          <path d="M50 104 C46 40 154 40 150 104" stroke="#2b2342" stroke-width="5" fill="none" stroke-linecap="round" />
+          <rect x="44" y="94" width="14" height="22" rx="6" fill="#2b2342" />
+          <path d="M52 114 C56 128 70 134 84 132" stroke="#2b2342" stroke-width="3.5" fill="none" stroke-linecap="round" />
+          <circle cx="86" cy="132" r="4.5" style="fill: var(--coach-accent)" />
+          <path d="M132 46 l4.5 9.5 10.5 1.2 -7.8 7 2.2 10.3 -9.4 -5.3 -9.4 5.3 2.2 -10.3 -7.8 -7 10.5 -1.2 Z" style="fill: var(--coach-accent)" stroke="#fff" stroke-width="1.5" />
+          <path d="M146 116 l2 4 4.5 0.5 -3.3 3 1 4.4 -4.2 -2.4 -4 2.4 0.9 -4.4 -3.3 -3 4.5 -0.5 Z" fill="#fff" />
+        </symbol>
+        <!-- Silhouet van een speler voor de HUD-mockup (in het echt: het camerabeeld). -->
+        <symbol id="person" viewBox="0 0 200 400">
+          <circle cx="100" cy="52" r="26" />
+          <path d="M70 92 Q100 82 130 92 L138 196 Q100 206 62 196 Z" />
+          <path d="M70 96 L32 52 L22 18" stroke-width="18" stroke-linecap="round" fill="none" />
+          <path d="M130 96 L168 52 L178 18" stroke-width="18" stroke-linecap="round" fill="none" />
+          <path d="M80 196 L66 286 L52 380" stroke-width="22" stroke-linecap="round" fill="none" />
+          <path d="M120 196 L134 286 L148 380" stroke-width="22" stroke-linecap="round" fill="none" />
+        </symbol>
+        <!-- Pictogrammen per game (24×24, lijn). -->
+        <symbol id="i-spot" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6l-1 5h-4z" /><path d="M10 8 4 21h16L14 8" /><path d="M9 15h6" /></symbol>
+        <symbol id="i-stick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="15" cy="7" r="4" /><path d="m12 10-7 9" /><path d="M19 2.5 20 1M21.5 6H23M18 12l1 1.5" /></symbol>
+        <symbol id="i-laser" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h20M2 12h7m6 0h7M2 18h20" /><circle cx="12" cy="12" r="1.5" /></symbol>
+        <symbol id="i-punch" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4 16 9l5 1-4 3 1 5-4-3-4 3 1-5-4-3 5-1z" /><path d="M2 12h3M3 7l2 1.5M3 17l2-1.5" /></symbol>
+        <symbol id="i-jump" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 11 6-6 6 6" /><path d="m6 18 6-6 6 6" /></symbol>
+        <symbol id="i-freeze" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M3.3 7l17.4 10M3.3 17 20.7 7" /><path d="m9 4 3 2 3-2M9 20l3-2 3 2" /></symbol>
+        <symbol id="i-climb" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 22V8M17 22V8M7 18h10M7 13h10" /><path d="M5 7a3 3 0 0 1 3-4 4 4 0 0 1 7 0 3 3 0 0 1 4 4z" /></symbol>
+        <symbol id="i-crawl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="15" r="4" /><circle cx="5.5" cy="9" r="2" /><circle cx="10" cy="5.5" r="2" /><circle cx="14" cy="5.5" r="2" /><circle cx="18.5" cy="9" r="2" /></symbol>
+      </defs>
+    </svg>
+
+    <div class="page">
+      <header>
+        <h1>Idol Academy · stijlvoorbeeld</h1>
+        <p>Twee richtingen voor dezelfde app, naast elkaar. Kies A, B, of een mix (bv. "de kaarten van B met de HUD van A").</p>
+        <p>De coach "Lumi" is een eigen ontwerp in K-pop-stijl: geen bestaand idol of personage (#14). Ook de muziek wordt zelfgemaakt.</p>
+        <span class="notice">Dit is enkel een voorbeeld: niets hiervan zit al in de app.</span>
+      </header>
+
+      <div class="compare">
+        <!-- ======================= A ======================= -->
+        <section class="theme theme-a" aria-label="Stijl A: Neon Stage">
+          <span class="label">Stijl A · Neon Stage</span>
+          <div class="hero">
+            <svg class="coach" viewBox="0 0 200 240" role="img" aria-label="Coach Lumi"><use href="#coach" /></svg>
+            <div>
+              <div class="wordmark">IDOL<br />ACADEMY</div>
+              <div class="bubble">Hoi trainee! Ik ben <b>Lumi</b>. Klaar voor je eerste training?</div>
+            </div>
+          </div>
+
+          <h3>Kleuren</h3>
+          <div class="swatches">
+            <div class="swatch"><i style="background: #0b0720"></i><span>Podium<br /><small>#0B0720</small></span></div>
+            <div class="swatch"><i style="background: #ff3dae"></i><span>Neon roze<br /><small>#FF3DAE</small></span></div>
+            <div class="swatch"><i style="background: #22e6ff"></i><span>Cyaan<br /><small>#22E6FF</small></span></div>
+            <div class="swatch"><i style="background: #8b5cf6"></i><span>Violet<br /><small>#8B5CF6</small></span></div>
+            <div class="swatch"><i style="background: #c6ff3d"></i><span>Lime<br /><small>#C6FF3D</small></span></div>
+            <div class="swatch"><i style="background: #ffb020"></i><span>Amber<br /><small>#FFB020</small></span></div>
+          </div>
+
+          <h3>Letters</h3>
+          <div class="type">
+            <p class="t1">SPOTLIGHT SPRINT</p>
+            <p class="t2">Unbounded — titels, cijfers, knoppen</p>
+            <p>Outfit — gewone tekst. Zak door je knieën en spring zo hoog als je kan!</p>
+            <span class="num">12</span>
+          </div>
+
+          <h3>Knoppen</h3>
+          <div class="buttons">
+            <button class="btn primary" type="button">Start training</button>
+            <button class="btn secondary" type="button">Estafette</button>
+            <span class="chip">Bovenlichaam volstaat</span>
+          </div>
+
+          <h3>Trainingen</h3>
+          <div class="cards">
+            <div class="card" style="--c: #ff3dae"><span class="tag">Cardio</span><span class="icon"><svg><use href="#i-spot" /></svg></span><strong>Spotlight Sprint</strong><small>Knieën hoog · 20 s</small><span class="stars">★★★</span></div>
+            <div class="card" style="--c: #22e6ff"><span class="tag">Cardio</span><span class="icon"><svg><use href="#i-stick" /></svg></span><strong>Lightstick Catch</strong><small>Raak de lichtjes · 40 s</small><span class="stars">★★☆</span></div>
+            <div class="card" style="--c: #c6ff3d"><span class="tag">Cardio</span><span class="icon"><svg><use href="#i-laser" /></svg></span><strong>Laser Stage</strong><small>Buk, spring, ontwijk · 40 s</small><span class="stars">★☆☆</span></div>
+            <div class="card" style="--c: #ffb020"><span class="tag">Cardio</span><span class="icon"><svg><use href="#i-punch" /></svg></span><strong>Beat Punch</strong><small>Stoot op de beat · 20 s</small><span class="stars">☆☆☆</span></div>
+            <div class="card" style="--c: #8b5cf6"><span class="tag">Kracht</span><span class="icon"><svg><use href="#i-jump" /></svg></span><strong>Jump Squad</strong><small>Squats + sprong · 40 s</small><span class="stars">★★☆</span></div>
+            <div class="card" style="--c: #22e6ff"><span class="tag">Kracht</span><span class="icon"><svg><use href="#i-freeze" /></svg></span><strong>Freeze Pose</strong><small>Hou je pose vast · 15 s</small><span class="stars">★☆☆</span></div>
+            <div class="card" style="--c: #ff3dae"><span class="tag">Kracht</span><span class="icon"><svg><use href="#i-climb" /></svg></span><strong>Sky Climb</strong><small>Klim naar het dak · 40 s</small><span class="stars">☆☆☆</span></div>
+            <div class="card" style="--c: #c6ff3d"><span class="tag">Test</span><span class="icon"><svg><use href="#i-crawl" /></svg></span><strong>Floor Crawl</strong><small>Experimenteel</small><span class="stars">☆☆☆</span></div>
+          </div>
+
+          <h3>Tijdens een training</h3>
+          <div class="hud">
+            <svg class="person" viewBox="0 0 200 400" aria-hidden="true" style="fill: rgba(255, 255, 255, 0.16); stroke: rgba(255, 255, 255, 0.16)"><use href="#person" /></svg>
+            <span class="cam-note">(hier staat het camerabeeld van het kind)</span>
+            <div class="timer">
+              <svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="17" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="4" /><circle cx="20" cy="20" r="17" fill="none" stroke="#22e6ff" stroke-width="4" stroke-linecap="round" stroke-dasharray="74 106.8" /></svg>
+              <span>14</span>
+            </div>
+            <div class="title">SPOTLIGHT SPRINT<small>Knieën hoog!</small></div>
+            <div class="count"><b>38</b><span>stappen</span></div>
+            <div class="power" aria-hidden="true"><i class="on" style="--zc: var(--z1)"></i><i class="on" style="--zc: var(--z2)"></i><i class="on" style="--zc: var(--z3)"></i><i style="--zc: var(--z4)"></i></div>
+            <div class="power-label">INTENS<small>Power</small></div>
+            <div class="popup">PERFECT!</div>
+            <div class="coachbox"><svg viewBox="0 0 200 240"><use href="#coach" /></svg><div class="bubble">Nog <b>5 seconden</b>! Sneller!</div></div>
+          </div>
+
+          <h3>Estafette-scorebord</h3>
+          <div class="board">
+            <div class="row first"><span class="rank">1</span><span class="name"><b>Mila</b><small>7 j</small></span><span class="bar"><i style="width: 100%"></i></span><span class="pct">112%</span></div>
+            <div class="row"><span class="rank">2</span><span class="name"><b>Noah</b><small>11 j</small></span><span class="bar"><i style="width: 86%"></i></span><span class="pct">96%</span></div>
+            <div class="row"><span class="rank">3</span><span class="name"><b>Papa</b><small>41 j</small></span><span class="bar"><i style="width: 61%"></i></span><span class="pct">68%</span></div>
+          </div>
+        </section>
+
+        <!-- ======================= B ======================= -->
+        <section class="theme theme-b" aria-label="Stijl B: Holo Pop">
+          <span class="label">Stijl B · Holo Pop</span>
+          <div class="hero">
+            <svg class="coach" viewBox="0 0 200 240" role="img" aria-label="Coach Lumi"><use href="#coach" /></svg>
+            <div>
+              <div class="wordmark">IDOL<br />ACADEMY</div>
+              <div class="bubble">Hoi trainee! Ik ben <b>Lumi</b>. Klaar voor je eerste training?</div>
+            </div>
+          </div>
+
+          <h3>Kleuren</h3>
+          <div class="swatches">
+            <div class="swatch"><i style="background: linear-gradient(135deg, #fde7ff, #e6f0ff, #e3fff6, #fff1e3)"></i><span>Holo<br /><small>verloop</small></span></div>
+            <div class="swatch"><i style="background: #1e1640"></i><span>Inkt<br /><small>#1E1640</small></span></div>
+            <div class="swatch"><i style="background: #ff2e93"></i><span>Hot pink<br /><small>#FF2E93</small></span></div>
+            <div class="swatch"><i style="background: #6c5cff"></i><span>Periwinkle<br /><small>#6C5CFF</small></span></div>
+            <div class="swatch"><i style="background: #00c2a8"></i><span>Mint<br /><small>#00C2A8</small></span></div>
+            <div class="swatch"><i style="background: #ffd23f"></i><span>Zon<br /><small>#FFD23F</small></span></div>
+          </div>
+
+          <h3>Letters</h3>
+          <div class="type">
+            <p class="t1">SPOTLIGHT SPRINT</p>
+            <p class="t2">Poppins ExtraBold — titels, cijfers, knoppen</p>
+            <p>Poppins — gewone tekst. Zak door je knieën en spring zo hoog als je kan!</p>
+            <span class="num" style="color: var(--primary)">12</span>
+          </div>
+
+          <h3>Knoppen</h3>
+          <div class="buttons">
+            <button class="btn primary" type="button">Start training</button>
+            <button class="btn secondary" type="button">Estafette</button>
+            <span class="chip">Bovenlichaam volstaat</span>
+          </div>
+
+          <h3>Trainingen</h3>
+          <div class="cards">
+            <div class="card" style="--c: #ff2e93"><span class="tag">Cardio</span><span class="icon"><svg><use href="#i-spot" /></svg></span><strong>Spotlight Sprint</strong><small>Knieën hoog · 20 s</small><span class="stars">★★★</span></div>
+            <div class="card" style="--c: #6c5cff"><span class="tag">Cardio</span><span class="icon"><svg><use href="#i-stick" /></svg></span><strong>Lightstick Catch</strong><small>Raak de lichtjes · 40 s</small><span class="stars">★★☆</span></div>
+            <div class="card" style="--c: #00a891"><span class="tag">Cardio</span><span class="icon"><svg><use href="#i-laser" /></svg></span><strong>Laser Stage</strong><small>Buk, spring, ontwijk · 40 s</small><span class="stars">★☆☆</span></div>
+            <div class="card" style="--c: #ff7a1a"><span class="tag">Cardio</span><span class="icon"><svg><use href="#i-punch" /></svg></span><strong>Beat Punch</strong><small>Stoot op de beat · 20 s</small><span class="stars">☆☆☆</span></div>
+            <div class="card" style="--c: #6c5cff"><span class="tag">Kracht</span><span class="icon"><svg><use href="#i-jump" /></svg></span><strong>Jump Squad</strong><small>Squats + sprong · 40 s</small><span class="stars">★★☆</span></div>
+            <div class="card" style="--c: #00a891"><span class="tag">Kracht</span><span class="icon"><svg><use href="#i-freeze" /></svg></span><strong>Freeze Pose</strong><small>Hou je pose vast · 15 s</small><span class="stars">★☆☆</span></div>
+            <div class="card" style="--c: #ff2e93"><span class="tag">Kracht</span><span class="icon"><svg><use href="#i-climb" /></svg></span><strong>Sky Climb</strong><small>Klim naar het dak · 40 s</small><span class="stars">☆☆☆</span></div>
+            <div class="card" style="--c: #ff7a1a"><span class="tag">Test</span><span class="icon"><svg><use href="#i-crawl" /></svg></span><strong>Floor Crawl</strong><small>Experimenteel</small><span class="stars">☆☆☆</span></div>
+          </div>
+
+          <h3>Tijdens een training</h3>
+          <div class="hud">
+            <svg class="person" viewBox="0 0 200 400" aria-hidden="true" style="fill: rgba(30, 22, 64, 0.14); stroke: rgba(30, 22, 64, 0.14)"><use href="#person" /></svg>
+            <span class="cam-note">(hier staat het camerabeeld van het kind)</span>
+            <div class="timer">
+              <svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="17" fill="#fff" stroke="rgba(30,22,64,.12)" stroke-width="4" /><circle cx="20" cy="20" r="17" fill="none" stroke="#ff2e93" stroke-width="4" stroke-linecap="round" stroke-dasharray="74 106.8" /></svg>
+              <span>14</span>
+            </div>
+            <div class="title">SPOTLIGHT SPRINT<small>Knieën hoog!</small></div>
+            <div class="count"><b>38</b><span>stappen</span></div>
+            <div class="power" aria-hidden="true"><i class="on" style="--zc: var(--z1)"></i><i class="on" style="--zc: var(--z2)"></i><i class="on" style="--zc: var(--z3)"></i><i style="--zc: var(--z4)"></i></div>
+            <div class="power-label">INTENS<small>Power</small></div>
+            <div class="popup">PERFECT!</div>
+            <div class="coachbox"><svg viewBox="0 0 200 240"><use href="#coach" /></svg><div class="bubble">Nog <b>5 seconden</b>! Sneller!</div></div>
+          </div>
+
+          <h3>Estafette-scorebord</h3>
+          <div class="board">
+            <div class="row first"><span class="rank">1</span><span class="name"><b>Mila</b><small>7 j</small></span><span class="bar"><i style="width: 100%"></i></span><span class="pct">112%</span></div>
+            <div class="row"><span class="rank">2</span><span class="name"><b>Noah</b><small>11 j</small></span><span class="bar"><i style="width: 86%"></i></span><span class="pct">96%</span></div>
+            <div class="row"><span class="rank">3</span><span class="name"><b>Papa</b><small>41 j</small></span><span class="bar"><i style="width: 61%"></i></span><span class="pct">68%</span></div>
+          </div>
+        </section>
+      </div>
+
+      <section class="footer">
+        <h2>Wat ik van je wil weten</h2>
+        <ol>
+          <li><b>A, B of een mix?</b> Mixen mag per onderdeel (kleuren, letters, kaarten, HUD).</li>
+          <li><b>Coach Lumi:</b> goed zo, of anders (ouder/jonger, jongen/meisje/neutraal, meerdere coaches om uit te kiezen)?</li>
+          <li><b>De HUD tijdens een training:</b> te druk of net goed van op 2–3 m? Wat mag weg?</li>
+          <li><b>Gamenamen in het Engels</b> (Spotlight Sprint…) of toch Nederlands?</li>
+        </ol>
+        <p><small>Scores en namen zijn verzonnen voorbeelden. Lettertypes: Unbounded, Outfit en Poppins (SIL Open Font License, <a href="fonts/LICENSE.txt" style="color: inherit">licentie</a>), zelf meegeleverd.</small></p>
+      </section>
+    </div>
+  </body>
+</html>

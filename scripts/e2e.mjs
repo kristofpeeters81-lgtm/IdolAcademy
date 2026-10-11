@@ -169,6 +169,16 @@ try {
   await page.screenshot({ path: path.join(OUT, '6-gsm-staand.png') });
 
   const violations = await page.evaluate(() => window.__csp);
+
+  // Service worker mag andere pagina's (bv. het stijlvoorbeeld) niet vervangen door de app.
+  const swPage = await browser.newPage();
+  await swPage.goto(url, { waitUntil: 'networkidle0' });
+  await swPage.waitForFunction(() => navigator.serviceWorker?.controller != null, { timeout: 15000 }).catch(() => swPage.reload({ waitUntil: 'networkidle0' }));
+  const controlled = await swPage.evaluate(() => navigator.serviceWorker?.controller != null);
+  await swPage.goto(`${url}stijl/`, { waitUntil: 'networkidle0' });
+  const styleTitle = await swPage.title();
+  check(controlled && styleTitle.includes('Stijlvoorbeeld'), `stijlvoorbeeld bereikbaar met actieve service worker (titel: ${styleTitle}, sw actief: ${controlled})`);
+  await swPage.close();
   check(violations.length === 0, `geen CSP-schendingen${violations.length ? ': ' + violations.join(', ') : ''}`);
   check(external.length === 0, `geen verzoeken naar andere domeinen${external.length ? ': ' + external.join(', ') : ''}`);
   const relevantErrors = consoleErrors.filter((e) => !/favicon/i.test(e));

@@ -52,3 +52,4 @@ nieuw nummer; de oude krijgt status `vervangen door #x` en blijft staan.
 | 39 | 2026-10-11 | Automatische modelwissel enkel tijdens de ruimte-check, nooit tijdens het tellen/spelen | voorlopig |
 | 40 | 2026-10-11 | Testlab met opname-knop; opnames in `test-fixtures/` worden automatisch tests (marge ±1/±10%, houdingen ±1,5 s); opnames van kinderen enkel publiek met toestemming | voorlopig |
 | 41 | 2026-10-11 | Jumping jacks als extra detector voor de opwarming (#18) | voorlopig |
+| 42 | 2026-10-11 | Visuele stijl: A "Neon Stage", B "Holo Pop" of een mix; coach Lumi; Engelse of Nederlandse gamenamen | open |
