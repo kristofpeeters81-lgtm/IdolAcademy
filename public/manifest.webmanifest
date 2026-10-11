@@ -1,0 +1,15 @@
+{
+  "name": "Idol Academy",
+  "short_name": "Idol Academy",
+  "description": "Bewegingsgames met de camera — test",
+  "lang": "nl",
+  "start_url": "./",
+  "scope": "./",
+  "display": "fullscreen",
+  "orientation": "any",
+  "background_color": "#0d0b1a",
+  "theme_color": "#0d0b1a",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

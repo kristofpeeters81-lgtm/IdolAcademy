@@ -1,0 +1,67 @@
+# Publiceert Idol Academy op GitHub Pages (gratis): https://<account>.github.io/IdolAcademy/
+# Draait bij elke push naar main. Eerst tests en veiligheidscontroles; faalt er iets, dan blijft
+# de vorige versie online.
+
+name: Website (GitHub Pages)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Afhankelijkheden installeren
+        run: npm ci
+
+      - name: Tests
+        run: npm test
+
+      - name: Web-app bouwen
+        run: npm run build
+
+      - name: Veiligheidscontrole (#4)
+        run: |
+          # 1. De blokkeerregel voor verbindingen naar andere domeinen moet in de pagina staan.
+          grep -q "connect-src 'self'" dist/index.html || { echo "::error::Veiligheidsregel (CSP) ontbreekt"; exit 1; }
+          # 2. Geen Google-telemetrie in de code (MediaPipe >= 1.0 bevat die, zie BESLISSINGEN #35).
+          #    "type.googleapis.com/..." zijn protobuf-typenamen zonder https:// en geen netwerkadressen.
+          if grep -rEaq "https?://[a-z0-9.-]*googleapis\.com|odml\.pa\.|clearcut" dist; then
+            echo "::error::Mogelijke telemetrie gevonden in de build"; grep -rEal "https?://[a-z0-9.-]*googleapis\.com|odml\.pa\.|clearcut" dist; exit 1
+          fi
+          # 3. De modellen en de licentie moeten mee gepubliceerd worden.
+          for f in mediapipe/models/pose_landmarker_lite.task mediapipe/models/pose_landmarker_full.task mediapipe/wasm/vision_wasm_internal.wasm mediapipe/LICENSE.txt; do
+            test -f "dist/$f" || { echo "::error::$f ontbreekt"; exit 1; }
+          done
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

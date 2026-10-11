@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Voorlopig icoon (blok 1). Definitief icoon volgt met het stijlvoorbeeld (blok 3). -->
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ff4fd8"/>
+      <stop offset="1" stop-color="#00f0ff"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="#0d0b1a"/>
+  <path d="M256 70l44 112 120 6-93 76 31 116-102-65-102 65 31-116-93-76 120-6z" fill="url(#g)"/>
+  <circle cx="256" cy="240" r="34" fill="#0d0b1a"/>
+</svg>
